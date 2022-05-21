@@ -22,6 +22,24 @@ import kotlin.math.roundToInt
 
 data class SwipeAction(val order: Int, val key: String, val title: String, val imageVector: ImageVector, val color: Color, val tint: Color, val dockLeft: Boolean)
 
+/**
+ * Swipeable Horizontal Card with custom actions
+ * @param modifier Modifier to be applied to the layout of the card.
+ * @param shape Defines the card's shape as well its shadow. A shadow is only
+ *  displayed if the [elevation] is greater than zero.
+ * @param backgroundColor The background color.
+ * @param contentColor The preferred content color provided by this card to its children.
+ * Defaults to either the matching content color for [backgroundColor], or if [backgroundColor]
+ * is not a color from the theme, this will keep the same value set above this card.
+ * @param border Optional border to draw on top of the card
+ * @param elevation The z-coordinate at which to place this card. This controls
+ *  the size of the shadow below the card.
+ *  @param buttonWidth SwipeActions fixed Width
+ *  @param swipeActions SwipeActions Array with left/right docking
+ *  @param onClickSwipeAction Raised event on SwipeAction tap
+ *  @param swipeBackColor Backcolor of swipe area
+ *  @param content Card Content
+ */
 @Composable
 fun SwipeableCard(modifier: Modifier = Modifier,
                   shape: Shape = MaterialTheme.shapes.medium,

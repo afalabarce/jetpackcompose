@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class
-)
+@file:OptIn(ExperimentalMaterialApi::class)
 
 package io.github.afalabarce.jetpackcompose
 
