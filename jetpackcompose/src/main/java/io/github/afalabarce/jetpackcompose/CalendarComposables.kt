@@ -595,8 +595,8 @@ private fun DayContainer(viewModel: CalendarViewModel,
             ),
         onClick = onClick,
         enabled = onClickEnabled,
-        color = backgroundColor,
-        onClickLabel = onClickLabel
+        color = backgroundColor
+        //onClickLabel = onClickLabel
     ) {
         content()
     }

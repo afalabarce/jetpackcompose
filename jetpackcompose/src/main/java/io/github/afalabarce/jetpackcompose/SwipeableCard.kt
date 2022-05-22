@@ -13,14 +13,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
 import kotlin.math.roundToInt
 
 data class SwipeAction(val order: Int, val key: String, val title: String, val imageVector: ImageVector, val color: Color, val tint: Color, val dockLeft: Boolean)
+
+private fun actionStateValue(swipeActions: Array<SwipeAction>): Int{
+    var returnValue = 0
+
+    val withLeftActions = swipeActions.any { x -> x.dockLeft }
+    val withRightActions = swipeActions.any { x -> !x.dockLeft }
+
+    if (withLeftActions && !withRightActions)
+        returnValue = 1
+    else if (!withLeftActions && withRightActions)
+        returnValue = 3
+    else if (withLeftActions && withRightActions)
+        returnValue = 2
+
+    return returnValue
+}
+
+fun getAnchorMap(density: Density, buttonWidth: Dp, swipeActions: Array<SwipeAction>): Map<Float, Int>{
+    val actionState = actionStateValue(swipeActions)
+    val sizePx = with(density) {
+        buttonWidth.times(swipeActions.count { x -> x.dockLeft }).toPx()
+    }
+    val sizePxR = with(density) {
+        buttonWidth.times(swipeActions.count { x -> !x.dockLeft }).toPx()
+    }
+
+    return when (actionState) {
+        1 -> mapOf(0f to 0, sizePx to 1)
+        2 -> mapOf(0f to 0, sizePx to 1, -sizePxR to 2)
+        3 -> mapOf(0f to 0, -sizePxR to 2)
+        else -> mapOf(0f to 0)
+    }
+}
 
 /**
  * Swipeable Horizontal Card with custom actions
@@ -45,6 +74,7 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                   shape: Shape = MaterialTheme.shapes.medium,
                   backgroundColor: Color = MaterialTheme.colors.surface,
                   buttonWidth: Dp,
+                  anchors: Map<Float,Int> = mapOf(0f to 0),
                   swipeBackColor: Color = Color.Transparent,
                   contentColor: Color = contentColorFor(backgroundColor),
                   border: BorderStroke? = null,
@@ -53,32 +83,10 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                   onClickSwipeAction: (SwipeAction) -> Unit = { },
                   content: @Composable () -> Unit) {
     val swipeableState = rememberSwipeableState(0)
-    val withLeftActions = swipeActions.any { x -> x.dockLeft }
-    val withRightActions = swipeActions.any { x -> !x.dockLeft }
-    val actionState = if (withLeftActions && !withRightActions)
-                            1
-                        else if (!withLeftActions && withRightActions)
-                            3
-                        else if (withLeftActions && withRightActions)
-                            2
-                        else
-                            0
-    val sizePx = with(LocalDensity.current) {
-        buttonWidth.times(swipeActions.count { x -> x.dockLeft }).toPx()
-    }
-    val sizePxR = with(LocalDensity.current) {
-        buttonWidth.times(swipeActions.count { x -> !x.dockLeft }).toPx()
-    }
-
-    val anchors = when (actionState){
-        1 ->  mapOf(0f to 0, sizePx to 1)
-        2 ->  mapOf(0f to 0, sizePx to 1, -sizePxR to 2)
-        3 -> mapOf(0f to 0, -sizePxR to 2)
-        else -> mapOf(0f to 0)
-    }
 
     Box(
-        modifier = modifier.background(swipeBackColor)
+        modifier = modifier
+            .background(swipeBackColor)
             .padding(0.dp)
             .swipeable(
                 state = swipeableState,
@@ -110,7 +118,11 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                                             modifier = Modifier.size(buttonWidth.div(2)),
                                             tint = action.tint
                                         )
-                                        Text(text = action.title, fontSize = 10.sp, color = action.tint)
+                                        Text(
+                                            text = action.title,
+                                            fontSize = 10.sp,
+                                            color = action.tint
+                                        )
                                     }
                                 }
                             }
@@ -142,7 +154,11 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                                             modifier = Modifier.size(buttonWidth.div(2)),
                                             tint = action.tint
                                         )
-                                        Text(text = action.title, fontSize = 10.sp, color = action.tint)
+                                        Text(
+                                            text = action.title,
+                                            fontSize = 10.sp,
+                                            color = action.tint
+                                        )
                                     }
                                 }
                             }
@@ -169,4 +185,5 @@ fun SwipeableCard(modifier: Modifier = Modifier,
             content = content
         )
     }
+
 }
