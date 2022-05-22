@@ -55,9 +55,14 @@ fun SwipeableCard(modifier: Modifier = Modifier,
     val swipeableState = rememberSwipeableState(0)
     val withLeftActions = swipeActions.any { x -> x.dockLeft }
     val withRightActions = swipeActions.any { x -> !x.dockLeft }
-    val actionState = 0.let{ if (withLeftActions) 1 else 0}
-                       .let { v -> if (withLeftActions && withRightActions) 2 else v}
-                       .let { v -> if (!withLeftActions && withRightActions) 3 else v}
+    val actionState = if (withLeftActions && !withRightActions)
+                            1
+                        else if (withLeftActions && withRightActions)
+                            2
+                        else if (!withLeftActions && withRightActions)
+                            3
+                        else
+                            0
     val sizePx = with(LocalDensity.current) {
         buttonWidth.times(swipeActions.count { x -> x.dockLeft }).toPx()
     }
