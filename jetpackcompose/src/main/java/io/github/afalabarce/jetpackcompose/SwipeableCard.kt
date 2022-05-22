@@ -57,10 +57,10 @@ fun SwipeableCard(modifier: Modifier = Modifier,
     val withRightActions = swipeActions.any { x -> !x.dockLeft }
     val actionState = if (withLeftActions && !withRightActions)
                             1
-                        else if (withLeftActions && withRightActions)
-                            2
                         else if (!withLeftActions && withRightActions)
                             3
+                        else if (withLeftActions && withRightActions)
+                            2
                         else
                             0
     val sizePx = with(LocalDensity.current) {
