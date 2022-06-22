@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -133,7 +134,7 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                   onClickSwipeAction: (SwipeAction) -> Unit = { },
                   content: @Composable () -> Unit) {
     val swipeableState = rememberSwipeableState(0)
-
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier
             .background(swipeBackColor)
@@ -154,9 +155,11 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                                     onClick = {
                                         onClickSwipeAction(action)
                                         if (unSwipeOnClick){
-                                            GlobalScope.launch {
-                                                withContext(Dispatchers.Main){
-                                                    swipeableState.animateTo(0)
+                                            coroutineScope.launch {
+                                                launch {
+                                                    withContext(Dispatchers.Main){
+                                                        swipeableState.animateTo(0)
+                                                    }
                                                 }
                                             }
                                         }
@@ -199,9 +202,11 @@ fun SwipeableCard(modifier: Modifier = Modifier,
                                     onClick = {
                                         onClickSwipeAction(action)
                                         if (unSwipeOnClick){
-                                            GlobalScope.launch {
-                                                withContext(Dispatchers.Main){
-                                                    swipeableState.animateTo(0)
+                                            coroutineScope.launch {
+                                                launch {
+                                                    withContext(Dispatchers.Main){
+                                                        swipeableState.animateTo(0)
+                                                    }
                                                 }
                                             }
                                         }
