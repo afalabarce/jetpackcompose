@@ -15,7 +15,7 @@ plugins {
 }
 
 ext {
-    compose_version = '1.2.0-rc01'
+    compose_version = '1.2.0-rc02'
     accompanist_version = '0.24.9-beta' //'0.21.2-beta'
 }
 
