@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene tres composables (por ahora) útiles para el día a día.  
+Contiene cuatro composables (por ahora) útiles para el día a día.  
   
  El primero de los composables es CalendarDropDown, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual.  
  
@@ -9,7 +9,9 @@ Contiene tres composables (por ahora) útiles para el día a día.
   
  El tercer composable, es un SwipeableCard, es un Card, que nos permite agregarle acciones en Swipe horizontal, tanto a izquierda como a derecha.   
  Debido a errores extraños he tenido que establecer en el composable el mapAnchors (el que se encarga de decirle al composable cuanto debe desplazar el Card a izquierda o derecha) desde la propia llamada.
-   
+
+ El cuarto composable, es un CircularProgressIndicator, que permite en una única llamada establecer un background al toroide del progreso según va decrementando. Además agrega un campo content que nos permite meter un composable en el interior.  
+
  Un ejemplo de llamada de SwipeableCard, sería el siguiente:
  
  ```kotlin
