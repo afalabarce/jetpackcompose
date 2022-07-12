@@ -145,9 +145,25 @@ Como podemos ver, el funcionamiento es bastante simple...
 
 Espero que sea de ayuda, tanto didácticamente, como para su uso en tus apps...
 
-Como no ta final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
+Otro elemento que se peude obtener en el módulo es un ViewModelService, esto es, permite la creación de servicios que pueden suscribirse a ViewModels que nos van a permitir el acceso reactivo a bases de datos (por ejemplo).
+
+Un ejemplo de uso de ViewModelService sería el siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.1.7'
+@AndroidEntryPoint
+class OnPomodoroService: ViewModelService() {
+    
+    @Inject lateinit var viewModel: OnPomodoroServiceViewModel
+    
+    ...
+    
+}
+```
+
+
+Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
+
+```
+implementation 'io.github.afalabarce:jetpackcompose:1.2.3'
 ```
 
