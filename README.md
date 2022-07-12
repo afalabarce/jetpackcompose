@@ -151,9 +151,9 @@ Un ejemplo de uso de ViewModelService sería el siguiente:
 
 ```
 @AndroidEntryPoint
-class OnPomodoroService: ViewModelService() {
+class MyViewModelService: ViewModelService() {
     
-    @Inject lateinit var viewModel: OnPomodoroServiceViewModel
+    @Inject lateinit var viewModel: MyServiceViewModel
     
     ...
     
