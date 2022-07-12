@@ -149,7 +149,7 @@ Otro elemento que se peude obtener en el módulo es un ViewModelService, esto es
 
 Un ejemplo de uso de ViewModelService sería el siguiente:
 
-```
+```kotlin
 @AndroidEntryPoint
 class MyViewModelService: ViewModelService() {
     
