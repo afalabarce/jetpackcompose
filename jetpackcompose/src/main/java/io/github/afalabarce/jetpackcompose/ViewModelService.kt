@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.MutableCreationExtras
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
-class ViewModelService: LifecycleService(),
+open class ViewModelService: LifecycleService(),
     ViewModelStoreOwner,
     HasDefaultViewModelProviderFactory, CoroutineScope by CoroutineScope(Dispatchers.IO) {
     private val mViewModelStore: ViewModelStore = ViewModelStore()
