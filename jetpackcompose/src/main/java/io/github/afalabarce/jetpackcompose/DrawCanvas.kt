@@ -1,9 +1,6 @@
-package io.github.afalabarce.jetpackcompose
+package io.github.afalabarce.testdrawcanvas
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
@@ -49,14 +46,14 @@ fun DrawCanvas(
 
     var motionEvent by remember { mutableStateOf(DrawAction.Idle) }
     var currentPosition by remember { mutableStateOf(Offset.Unspecified) }
-    val painter = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        val argbColor = penColor.toArgb()
-        style = Paint.Style.STROKE
-        color = argbColor
-        isDither = true
+    var previousPosition by remember { mutableStateOf(Offset.Unspecified) }
+
+    val painter = Paint().apply {
+        style = PaintingStyle.Stroke
+        color = penColor
         strokeWidth = penWidth.value * LocalContext.current.resources.displayMetrics.density
-        strokeCap = Paint.Cap.ROUND
-        strokeJoin = Paint.Join.ROUND
+        strokeCap = StrokeCap.Round
+        strokeJoin = StrokeJoin.Round
     }
 
     val canvasModifier = modifier
@@ -64,14 +61,20 @@ fun DrawCanvas(
             forEachGesture {
                 awaitPointerEventScope {
                     // Wait for at least one pointer to press down, and set first contact position
-                    val down: PointerInputChange = awaitFirstDown().also {
+                    awaitFirstDown().also {
                         motionEvent = DrawAction.Down
                         currentPosition = it.position
+                        previousPosition = currentPosition
                     }
 
                     do {
                         // This PointerEvent contains details including events, id, position and more
                         val event: PointerEvent = awaitPointerEvent()
+                        if (currentPosition == Offset.Unspecified) {
+                            motionEvent = DrawAction.Down
+                            currentPosition = event.changes.first().position
+                            previousPosition = currentPosition
+                        }
                         event.changes
                             .forEachIndexed { _: Int, pointerInputChange: PointerInputChange ->
 
@@ -90,26 +93,38 @@ fun DrawCanvas(
 
     Box(modifier = canvasModifier.drawBehind {
         when(motionEvent){
-            DrawAction.Down -> if (currentPosition.x != 0f && currentPosition.y != 0f)
-                path.moveTo(currentPosition.x, currentPosition.y)
+            DrawAction.Down -> {
+                if (currentPosition.x != 0f && currentPosition.y != 0f)
+                    path.moveTo(currentPosition.x, currentPosition.y)
+                previousPosition = currentPosition
+            }
             DrawAction.Move -> {
                 if (currentPosition != Offset.Unspecified && currentPosition.x != 0f && currentPosition.y != 0f) {
-                    path.lineTo(currentPosition.x, currentPosition.y)
+                    //path.lineTo(currentPosition.x, currentPosition.y)
+                    path.quadraticBezierTo(
+                        previousPosition.x,
+                        previousPosition.y,
+                        (previousPosition.x + currentPosition.x) / 2,
+                        (previousPosition.y + currentPosition.y) / 2
+                    )
                 }
+                previousPosition = currentPosition
             }
             DrawAction.Up -> {
                 path.lineTo(currentPosition.x, currentPosition.y)
                 // Change state to idle to not draw in wrong position if recomposition happens
+                currentPosition = Offset.Unspecified
+                previousPosition = currentPosition
                 motionEvent = DrawAction.Idle
             }
             else -> Unit
         }
         val drawingBitmap = ImageBitmap(size.width.toInt(), size.height.toInt(), ImageBitmapConfig.Argb8888).asAndroidBitmap()
-        val drawingCanvas = Canvas(drawingBitmap)
+        val drawingCanvas = Canvas(drawingBitmap.asImageBitmap())
 
         if (!erase){
             if (waterMark != null && !waterMarkOnFront){
-                drawingCanvas.drawBitmap(waterMark.scale(size.width.toInt(), size.height.toInt()), 0f, 0f, null )
+                drawingCanvas.drawImage(waterMark.scale(size.width.toInt(), size.height.toInt()).asImageBitmap(), Offset(0f, 0f), painter )
             }
 
             drawingCanvas.drawPath(
@@ -119,7 +134,7 @@ fun DrawCanvas(
             )
 
             if (waterMark != null && waterMarkOnFront){
-                drawingCanvas.drawBitmap(waterMark.scale(size.width.toInt(), size.height.toInt()), 0f, 0f, null )
+                drawingCanvas.drawImage(waterMark.scale(size.width.toInt(), size.height.toInt()).asImageBitmap(), Offset(0f, 0f), painter )
             }
 
         }
