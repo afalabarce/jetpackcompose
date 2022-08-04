@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
 
 package io.github.afalabarce.jetpackcompose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -711,6 +712,7 @@ private fun Week(viewModel: CalendarViewModel,
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 private fun ItemsCalendarMonth(
     viewModel: CalendarViewModel,
