@@ -1,4 +1,4 @@
-package io.github.afalabarce.testdrawcanvas
+package io.github.afalabarce.jetpackcompose
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.gestures.awaitFirstDown
