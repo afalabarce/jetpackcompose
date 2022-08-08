@@ -164,6 +164,6 @@ class MyViewModelService: ViewModelService() {
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.2.3'
+implementation 'io.github.afalabarce:jetpackcompose:1.2.7'
 ```
 
