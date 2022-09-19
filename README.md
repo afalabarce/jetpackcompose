@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene cuatro composables (por ahora) útiles para el día a día.  
+Contiene siete composables (por ahora) útiles para el día a día.  
   
  El primero de los composables es CalendarDropDown, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual.  
  
@@ -11,6 +11,16 @@ Contiene cuatro composables (por ahora) útiles para el día a día.
  Debido a errores extraños he tenido que establecer en el composable el mapAnchors (el que se encarga de decirle al composable cuanto debe desplazar el Card a izquierda o derecha) desde la propia llamada.
 
  El cuarto composable, es un CircularProgressIndicator, que permite en una única llamada establecer un background al toroide del progreso según va decrementando. Además agrega un campo content que nos permite meter un composable en el interior.  
+
+El quinto, es un LabelledSwitch, que nos permite utilizar un Switch con su label a la izquierda (además de un leadingIcon).
+
+El sexto, es un AlertDialog Sin paddings, el cual nos permite personalizar muchísimo la apariencia de nuestros alertdialog.
+
+El septimo, Un Canvas de dibujo que nos permite dibujar líneas y agregar una marca de agua, delante o detrás de los trazos, a fin de que por ejemplo, podamos emular una firma con un sello.
+
+Además se agrega una extensión a Modifier que permite poner un borde punteado a cualquier composable.
+
+Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
 
  Un ejemplo de llamada de SwipeableCard, sería el siguiente:
  
