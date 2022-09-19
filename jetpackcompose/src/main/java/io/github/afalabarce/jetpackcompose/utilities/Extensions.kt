@@ -14,3 +14,15 @@ fun Calendar.today(): Date? = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()
     val dateStr = f.format(this.time)
     f.parse(dateStr)
 }
+
+fun String.toDate(format: String = "yyyy-MM-dd"): Date? = try{
+    SimpleDateFormat(format).parse(this)
+}catch (ex: Exception){
+    null
+}
+
+fun CharSequence.toDate(format: String = "yyyy-MM-dd"): Date? = try{
+    SimpleDateFormat(format).parse(this.toString())
+}catch (ex: Exception){
+    null
+}

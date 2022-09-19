@@ -1,18 +1,12 @@
 package io.github.afalabarce.jetpackcompose
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.*
-import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.*
-import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -20,9 +14,10 @@ fun LabelledSwitch(
     modifier: Modifier = Modifier,
     checked: Boolean,
     label: String,
-    onCheckedChange: ((Boolean) -> Unit),
+    leadingIcon: @Composable () -> Unit = {},
     enabled: Boolean = true,
-    colors: SwitchColors = SwitchDefaults.colors()
+    colors: SwitchColors = SwitchDefaults.colors(),
+    onCheckedChange: ((Boolean) -> Unit)
 ) {
 
     Box(
@@ -42,13 +37,19 @@ fun LabelledSwitch(
             LocalContentAlpha provides
                     if (enabled) ContentAlpha.high else ContentAlpha.disabled
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(end = 16.dp)
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(0.9f).align(Alignment.CenterStart),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                leadingIcon()
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier
+                        .padding(end = 16.dp)
+                )
+            }
         }
 
         Switch(
@@ -56,11 +57,7 @@ fun LabelledSwitch(
             onCheckedChange = null,
             enabled = enabled,
             colors = colors,
-            modifier = Modifier.align(Alignment.CenterEnd)
+            modifier = Modifier.align(Alignment.CenterEnd).padding(start = 8.dp)
         )
     }
 }
-
-
-
-

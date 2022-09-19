@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -27,18 +28,16 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.text
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 import io.github.afalabarce.jetpackcompose.utilities.format
+import io.github.afalabarce.jetpackcompose.utilities.iif
+import io.github.afalabarce.jetpackcompose.utilities.toDate
+import io.github.afalabarce.jetpackcompose.utilities.today
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -50,7 +49,7 @@ private val BlueCalendar = Color(0xFF005594)
 
 //region Private fields
 
-private val CELL_SIZE = 28.dp
+private val CELL_SIZE = 36.dp
 
 //endregion
 
@@ -122,85 +121,39 @@ private enum class DaySelectedStatus{
     }
 }
 
-private enum class Month{
-    None,
-    January,
-    February,
-    March,
-    April,
-    May,
-    June,
-    July,
-    August,
-    September,
-    Obtober,
-    November,
-    December;
-
-    fun monthNumber(): Int = when(this){
-        January -> 1
-        February -> 2
-        March -> 3
-        April -> 4
-        May -> 5
-        June -> 6
-        July -> 7
-        August -> 8
-        September -> 9
-        Obtober -> 10
-        November -> 11
-        December -> 12
-        else -> 0
-    }
+private enum class Month (val monthNumber: Int){
+    None (0),
+    January(1),
+    February(2),
+    March(3),
+    April(4),
+    May(5),
+    June(6),
+    July(7),
+    August(8),
+    September(9),
+    Obtober(10),
+    November(11),
+    December(12);
 
     override fun toString(): String = when(this){
-        January -> "Enero"
-        February -> "Febrero"
-        March -> "Marzo"
-        April -> "Abril"
-        May -> "Mayo"
-        June -> "Junio"
-        July -> "Julio"
-        August -> "Agosto"
-        September -> "Septiembre"
-        Obtober -> "Octubre"
-        November -> "Noviembre"
-        December -> "Diciembre"
-        else -> "Ninguno"
-    }
+        January -> "2000-01-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        February -> "2000-02-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        March -> "2000-03-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        April -> "2000-04-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        May -> "2000-05-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        June -> "2000-06-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        July -> "2000-07-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        August -> "2000-08-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        September -> "2000-09-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        Obtober -> "2000-10-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        November -> "2000-11-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        December -> "2000-12-01".toDate("yyyy-MM-dd")?.format("MMMM") ?: "---"
+        else -> "---"
+    }.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     companion object{
-        fun fromNumber(value: Int): Month = when(value){
-            1 -> January
-            2 -> February
-            3 -> March
-            4 -> April
-            5 -> May
-            6 -> June
-            7 -> July
-            8 -> August
-            9 -> September
-            10 ->  Obtober
-            11 ->  November
-            12 ->  December
-            else -> None
-        }
-    }
-}
-
-//endregion
-
-//region Private extension functions
-
-private inline fun <T>Flow<T>.collectSync(crossinline bodyCollect: (T) -> Unit) {
-    val flow = this
-
-    MainScope().launch {
-        withContext(Dispatchers.IO){
-            flow.collect{ v ->
-                bodyCollect(v)
-            }
-        }
+        fun fromNumber(value: Int): Month = Month.values().first { m -> m.monthNumber == value }
     }
 }
 
@@ -208,14 +161,14 @@ private inline fun <T>Flow<T>.collectSync(crossinline bodyCollect: (T) -> Unit) 
 
 //region Private data classes
 
-private class CalendarDay(val value: Int, val month: Month, val year: Int, status: DaySelectedStatus){
-    var status by mutableStateOf(status)
+private data class CalendarDay(val value: Int, val month: Month, val year: Int, val statusDay: DaySelectedStatus){
+    var status by mutableStateOf(statusDay)
 
     val date: Date by mutableStateOf(Calendar.getInstance().also { c ->
         if (value < 1)
             c.set(1900, 1, 1)
         else
-            c.set(this.year, this.month.monthNumber() - 1, value)
+            c.set(this.year, this.month.monthNumber - 1, value)
 
         c.set(Calendar.HOUR, 0)
         c.set(Calendar.MINUTE, 0)
@@ -227,21 +180,21 @@ private class CalendarDay(val value: Int, val month: Month, val year: Int, statu
 
 private data class CalendarMonth(val name: String, val month: Month, val year: Int ){
     val startDayOfWeek = mutableStateOf(DayOfWeek.Monday).apply {
-        val firstDay = Calendar.getInstance().also { c -> c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber() - 1, 1) }
+        val firstDay = Calendar.getInstance().also { c -> c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber - 1, 1) }
         this.value = DayOfWeek.fromNumber(firstDay.get(Calendar.DAY_OF_WEEK))
     }
     val shortName by lazy { name.substring(1, 3) }
 
     val lastDayOfMonth = mutableStateOf(0).apply {
         this.value = Calendar.getInstance().also { c ->
-            c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber() - 1, 1)
+            c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber - 1, 1)
             c.add(Calendar.MONTH, 1)
             c.add(Calendar.DATE, -1)
         }.get(Calendar.DATE)
     }
     val days = mutableListOf<CalendarDay>().apply {
         val lastDay = this@CalendarMonth.lastDayOfMonth.value
-        val lastDayWeek = DayOfWeek.fromNumber(Calendar.getInstance().also { c -> c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber() - 1, lastDay) }.get(Calendar.DAY_OF_WEEK))
+        val lastDayWeek = DayOfWeek.fromNumber(Calendar.getInstance().also { c -> c.set(this@CalendarMonth.year, this@CalendarMonth.month.monthNumber - 1, lastDay) }.get(Calendar.DAY_OF_WEEK))
 
         addAll(IntRange(1, startDayOfWeek.value.number - 1).map { CalendarDay(0, Month.None, 0, DaySelectedStatus.NonClickable) })
         addAll(IntRange(1, lastDay).map { d -> CalendarDay(d, this@CalendarMonth.month, this@CalendarMonth.year, DaySelectedStatus.NonSelected) })
@@ -269,13 +222,13 @@ private data class CalendarMonth(val name: String, val month: Month, val year: I
     else
         this.days.filter { x -> x.value > day }.minByOrNull { x -> x.value }
     operator fun compareTo(other: CalendarMonth) = if (this.year == other.year)
-        this.month.monthNumber().compareTo(other.month.monthNumber())
+        this.month.monthNumber.compareTo(other.month.monthNumber)
     else
         this.year.compareTo(other.year)
 
 }
 
-private class CalendarYear(val year: Int){
+private data class CalendarYear(val year: Int){
     val months: List<CalendarMonth>
         get() = IntRange(1,12).map { month -> CalendarMonth(Month.fromNumber(month).toString(), Month.fromNumber(month), this.year) }
 }
@@ -356,53 +309,68 @@ private class DatesSelectedState(private val year: CalendarYear){
 }
 
 private class CalendarViewModel(override val coroutineContext: CoroutineContext) : CoroutineScope {
-    private val _currentYear: MutableStateFlow<CalendarYear> by lazy { MutableStateFlow(CalendarYear(Calendar.getInstance().get(Calendar.YEAR))) }
+    private val _currentYear: MutableStateFlow<CalendarYear> by lazy {
+        MutableStateFlow(CalendarYear(Calendar.getInstance().get(Calendar.YEAR)))
+    }
     val currentYear: Flow<CalendarYear>
         get() = this._currentYear
     private val _currentMonth: MutableStateFlow<CalendarMonth> by lazy {
-        MutableStateFlow(this._currentYear.value.months.first { m -> m.month == Month.fromNumber(Calendar.getInstance().get(Calendar.MONTH) + 1) })
+        MutableStateFlow(this._currentYear.value.months.first { m ->
+            m.month == Month.fromNumber(Calendar.getInstance().get(Calendar.MONTH) + 1)
+        })
     }
     val currentMonth: Flow<CalendarMonth>
         get() = this._currentMonth
 
     private val _currentDate: MutableStateFlow<Date> by lazy { MutableStateFlow(Calendar.getInstance().time) }
-    val currentDate: Flow<Date>
+    val currentDate: StateFlow<Date>
         get() = this._currentDate
 
-    fun setYear(newYear: Int) = runBlocking {
-        withContext(Dispatchers.IO){
-            val month = this@CalendarViewModel._currentMonth.value.month
-            val day =  Calendar.getInstance().also { c -> c.time = this@CalendarViewModel._currentDate.value }.get(Calendar.DAY_OF_MONTH)
-            val date = Calendar.getInstance().also { c -> c.set(newYear, month.monthNumber() - 1, day) }.time
-            this@CalendarViewModel.setDate(date)
-        }
+    fun setYear(newYear: Int) {
+        val month = this._currentMonth.value.month
+        val day = Calendar.getInstance()
+            .also { c -> c.time = this._currentDate.value }
+            .get(Calendar.DAY_OF_MONTH)
+        val date = Calendar.getInstance()
+            .also { c -> c.set(newYear, month.monthNumber - 1, day) }.time
+        this.setDate(date)
     }
 
-    fun setMonth(newMonth: Month) = runBlocking {
-        withContext(Dispatchers.IO){
-            val year = this@CalendarViewModel._currentYear.value.year
-            val month = this@CalendarViewModel._currentYear.value.months.first { m -> m.month == newMonth }
-            val day =  Calendar.getInstance().also { c -> c.time = this@CalendarViewModel._currentDate.value }.get(Calendar.DAY_OF_MONTH)
-            val date = Calendar.getInstance().also { c -> c.set(year, newMonth.monthNumber() - 1, day) }.time
-            this@CalendarViewModel.setDate(date)
-        }
+
+    fun setMonth(newMonth: Month) {
+        val year = this._currentYear.value.year
+        val month = this._currentYear.value.months.first { m -> m.month == newMonth }
+        val day = Calendar.getInstance()
+            .also { c -> c.time = this._currentDate.value }
+            .get(Calendar.DAY_OF_MONTH)
+        val date = Calendar.getInstance()
+            .also { c -> c.set(year, newMonth.monthNumber - 1, day) }.time
+        this.setDate(date)
     }
 
-    fun setDate(newDate: Date) = runBlocking {
-        withContext(Dispatchers.IO){
-            val calDate = Calendar.getInstance().also { c -> c.time = newDate }
-            calDate.set(Calendar.HOUR, 0)
-            calDate.set(Calendar.MINUTE, 0)
-            calDate.set(Calendar.SECOND, 0)
-            calDate.set(Calendar.MILLISECOND, 0)
-            val date = calDate.time
-            val calendarYear = CalendarYear(calDate.get(Calendar.YEAR))
-            val calendarMonth = calendarYear.months.first { m -> m.month == Month.fromNumber(calDate.get(Calendar.MONTH) + 1) }
+    fun setDate(newDate: Date) {
+        val calDate = Calendar.getInstance().also { c -> c.time = newDate }
+        calDate.set(Calendar.HOUR, 0)
+        calDate.set(Calendar.MINUTE, 0)
+        calDate.set(Calendar.SECOND, 0)
+        calDate.set(Calendar.MILLISECOND, 0)
+        val monthNumber: Int = calDate.get(Calendar.MONTH) + 1
+        val searchMonth: Month = Month.fromNumber(monthNumber)
 
-            this@CalendarViewModel._currentYear.emit(calendarYear)
-            this@CalendarViewModel._currentMonth.emit(calendarMonth)
-            this@CalendarViewModel._currentDate.emit(date)
+        val date = calDate.time
+        val calendarYear = CalendarYear(calDate.get(Calendar.YEAR))
+        val calendarMonth = calendarYear.months.first { m -> m.month == searchMonth }
+
+        this._currentYear.update { it.copy(year = calendarYear.year) }
+        this._currentMonth.update {
+            it.copy(
+                name = calendarMonth.name,
+                month = calendarMonth.month,
+                year = calendarMonth.year
+            )
         }
+
+        this._currentDate.update { date }
     }
 }
 
@@ -471,18 +439,24 @@ private fun MonthHeader(viewModel: CalendarViewModel,
                         headerTextColor: Color = Color.Black,
                         headerButtonsBackColor: Color = Color.DarkGray,
 ) {
-    val buttonSize: Dp = 24.dp
-    var month by remember { mutableStateOf(CalendarMonth(Month.January.name, month = Month.January, 2000)) }
+    val buttonSize: Dp = 28.dp
+    val month by viewModel.currentMonth.collectAsState(initial = CalendarMonth(Month.None.name,
+        Month.None,
+        2000))
 
-    viewModel.currentMonth.collectSync { newMonth ->
-        month = newMonth
-    }
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(headerBackColor)) {
+        Row (modifier= Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp, horizontal = 16.dp),
 
-    Column(modifier = Modifier.fillMaxWidth().background(headerBackColor)) {
-        Row (modifier=Modifier.fillMaxWidth().padding(vertical = 6.dp, horizontal = 16.dp)) {
+            ) {
             FloatingActionButton(
                 onClick = { viewModel.setYear(month.year - 1) },
-                modifier = Modifier.size(buttonSize).weight(0.15F),
+                modifier = Modifier
+                    .size(buttonSize)
+                    .weight(0.15F),
                 shape = RoundedCornerShape(buttonSize),
                 backgroundColor = headerButtonsBackColor,
                 contentColor = Color.White
@@ -490,7 +464,10 @@ private fun MonthHeader(viewModel: CalendarViewModel,
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null, modifier = Modifier.size(16.dp))
             }
             Text(month.year.format(),
-                modifier = Modifier.weight(0.7F).height(buttonSize).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .weight(0.7F)
+                    .height(buttonSize)
+                    .align(Alignment.CenterVertically),
                 textAlign = TextAlign.Center,
                 color = headerTextColor,
                 style = MaterialTheme.typography.h6,
@@ -498,7 +475,9 @@ private fun MonthHeader(viewModel: CalendarViewModel,
                 )
             FloatingActionButton(
                 onClick = { viewModel.setYear(month.year + 1) },
-                modifier = Modifier.size(buttonSize) .weight(0.15F),
+                modifier = Modifier
+                    .size(buttonSize)
+                    .weight(0.15F),
                 shape = RoundedCornerShape(buttonSize),
                 backgroundColor = headerButtonsBackColor,
                 contentColor = Color.White
@@ -506,18 +485,23 @@ private fun MonthHeader(viewModel: CalendarViewModel,
                 Icon(Icons.Rounded.ArrowForward, contentDescription = null, modifier = Modifier.size(16.dp))
             }
         }
-        Row(modifier=Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 6.dp)) {
+        Row(modifier= Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 6.dp)) {
             FloatingActionButton(
                 onClick = {
                     if (month.month != Month.January){
-                        viewModel.setMonth(Month.fromNumber(month.month.monthNumber() - 1 ))
+                        viewModel.setMonth(Month.fromNumber(month.month.monthNumber - 1 ))
                     }else{
                         val year = month.year - 1
                         val monthDec = Month.December
                         viewModel.setYear(year).also { viewModel.setMonth(monthDec) }
                     }
                 },
-                modifier = Modifier.size(buttonSize).weight(0.15F),
+                modifier = Modifier
+                    .size(buttonSize)
+                    .weight(0.15F),
                 shape = RoundedCornerShape(buttonSize),
                 backgroundColor = headerButtonsBackColor,
                 contentColor = Color.White
@@ -525,7 +509,10 @@ private fun MonthHeader(viewModel: CalendarViewModel,
                 Icon(Icons.Rounded.ArrowBack, contentDescription = null, modifier = Modifier.size(16.dp))
             }
             Text(month.name.format(),
-                modifier = Modifier.weight(0.7F).height(buttonSize).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .weight(0.7F)
+                    .height(buttonSize)
+                    .align(Alignment.CenterVertically),
                 textAlign = TextAlign.Center,
                 color = headerTextColor,
                 style = MaterialTheme.typography.subtitle2,
@@ -533,14 +520,16 @@ private fun MonthHeader(viewModel: CalendarViewModel,
             FloatingActionButton(
                 onClick = {
                     if(month.month != Month.December){
-                        viewModel.setMonth(Month.fromNumber(month.month.monthNumber() + 1 ))
+                        viewModel.setMonth(Month.fromNumber(month.month.monthNumber + 1 ))
                     }else{
                         val year = month.year + 1
                         val monthJan = Month.January
                         viewModel.setYear(year).also { viewModel.setMonth(monthJan) }
                     }
                 },
-                modifier = Modifier.size(buttonSize).weight(0.15F),
+                modifier = Modifier
+                    .size(buttonSize)
+                    .weight(0.15F),
                 shape = RoundedCornerShape(buttonSize),
                 backgroundColor = headerButtonsBackColor,
                 contentColor = Color.White
@@ -609,7 +598,10 @@ private fun Day(name: String) {
         Text(
             modifier = Modifier.wrapContentSize(Alignment.Center),
             text = name,
-            style = MaterialTheme.typography.caption.copy(Color.Black.copy(alpha = 0.6f))
+            style = MaterialTheme.typography.caption.copy(
+                color = Color.Black.copy(alpha = 0.6f),
+                fontSize = 13.sp
+            )
         )
     }
 }
@@ -619,29 +611,31 @@ private fun Day(viewModel: CalendarViewModel,
                 day: CalendarDay,
                 month: CalendarMonth,
                 selectedDayColor: Color,
+                selectedDayForeColor: Color = Color.Black,
                 onDayClicked: (CalendarDay) -> Unit,
                 modifier: Modifier = Modifier
 ) {
     val enabled = day.status != DaySelectedStatus.NonClickable
     var status by remember { mutableStateOf(day.status) }
     var calendarYear by remember { mutableStateOf(CalendarYear(month.year)) }
-    viewModel.currentDate.collectSync { newDate ->
-        if (enabled){
-            val cNewDate = Calendar.getInstance().also { c -> c.time = newDate }
-            val cDate = Calendar.getInstance().also { c -> c.time = day.date }
-            val cNewDay = cNewDate.get(Calendar.DAY_OF_MONTH)
-            val cNewMonth = cNewDate.get(Calendar.MONTH)
-            val cNewYear = cNewDate.get(Calendar.YEAR)
+    val newDate by viewModel.currentDate.collectAsState(initial = Calendar.getInstance().today())
 
-            val cDay = cDate.get(Calendar.DAY_OF_MONTH)
-            val cMonth = cDate.get(Calendar.MONTH)
-            val cYear = cDate.get(Calendar.YEAR)
-            status = if(cDay == cNewDay && cMonth == cNewMonth && cYear == cNewYear)
-                DaySelectedStatus.Selected
-            else
-                DaySelectedStatus.NonSelected
-        }
+    if (enabled){
+        val cNewDate = Calendar.getInstance().also { c -> c.time = newDate }
+        val cDate = Calendar.getInstance().also { c -> c.time = day.date }
+        val cNewDay = cNewDate.get(Calendar.DAY_OF_MONTH)
+        val cNewMonth = cNewDate.get(Calendar.MONTH)
+        val cNewYear = cNewDate.get(Calendar.YEAR)
+
+        val cDay = cDate.get(Calendar.DAY_OF_MONTH)
+        val cMonth = cDate.get(Calendar.MONTH)
+        val cYear = cDate.get(Calendar.YEAR)
+        status = if(cDay == cNewDay && cMonth == cNewMonth && cYear == cNewYear)
+            DaySelectedStatus.Selected
+        else
+            DaySelectedStatus.NonSelected
     }
+
 
     DayContainer(viewModel = viewModel,
         modifier = modifier.semantics {
@@ -664,7 +658,10 @@ private fun Day(viewModel: CalendarViewModel,
                     .wrapContentSize(Alignment.Center)
                     .clearAndSetSemantics {},
                 text = if (day.value > 0) day.value.format("00") else "",
-                style = MaterialTheme.typography.body1.copy(color = Color.Black)
+                style = MaterialTheme.typography.body1.copy(
+                    color = (status == DaySelectedStatus.Selected).iif(selectedDayForeColor, Color.Black),
+                    fontSize = 18.sp
+                )
             )
         }
     }
@@ -685,6 +682,7 @@ private fun Week(viewModel: CalendarViewModel,
                  month: CalendarMonth,
                  week: CalendarWeek,
                  selectedDayColor: Color,
+                 selectedDayForeColor: Color = Color.Black,
                  onDayClicked: (CalendarDay) -> Unit
 ) {
     val (leftFillColor, rightFillColor) = getLeftRightWeekColors(week, month)
@@ -701,6 +699,7 @@ private fun Week(viewModel: CalendarViewModel,
         for (day in week) {
             Day(viewModel = viewModel,
                 selectedDayColor = selectedDayColor,
+                selectedDayForeColor = selectedDayForeColor,
                 day = day,
                 month = month,
                 onDayClicked = onDayClicked)
@@ -719,25 +718,17 @@ private fun ItemsCalendarMonth(
     headerBackColor: Color = Color.Transparent,
     headerTextColor: Color = Color.Black,
     headerButtonsBackColor: Color = Color.DarkGray,
+    bottomBackColor: Color = BlueCalendar,
     selectedDayColor: Color,
+    selectedDayForeColor: Color = Color.Black,
     onDayClicked: (Date) -> Unit
 ) {
-    val contentModifier = Modifier.fillMaxWidth().wrapContentWidth(Alignment.CenterHorizontally)
-    var currentDate by remember { mutableStateOf(Calendar.getInstance().time) }
-    var calendarYear by remember { mutableStateOf(CalendarYear(Calendar.getInstance().also { c -> c.time = currentDate }.get(Calendar.YEAR))) }
-    var month by remember { mutableStateOf(calendarYear.months.first { m -> m.month == Month.fromNumber(Calendar.getInstance().also { c -> c.time = currentDate }.get(Calendar.MONTH) + 1) }) }
-
-    viewModel.currentYear.collectSync { newYear ->
-        calendarYear = newYear
-    }
-
-    viewModel.currentMonth.collectSync { newMonth ->
-        month = newMonth
-    }
-
-    viewModel.currentDate.collectSync { newDate ->
-        currentDate = newDate
-    }
+    val contentModifier = Modifier
+        .fillMaxWidth()
+        .wrapContentWidth(Alignment.CenterHorizontally)
+    val currentDate: Date  by viewModel.currentDate.collectAsState()
+    val calendarYear by viewModel.currentYear.collectAsState(initial = CalendarYear(0))
+    val month by viewModel.currentMonth.collectAsState(initial = CalendarMonth("", Month.None, 0))
 
     Scaffold (modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -755,7 +746,7 @@ private fun ItemsCalendarMonth(
                     viewModel.setDate(now)
                 },
                 shape = RoundedCornerShape(50),
-                backgroundColor = BlueCalendar
+                backgroundColor = bottomBackColor
             ) {
                 Icon(Icons.Rounded.DateRange, "", tint = Color.White)
             }
@@ -764,7 +755,7 @@ private fun ItemsCalendarMonth(
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
             BottomAppBar(modifier = Modifier.height(52.dp),
-                backgroundColor = BlueCalendar,
+                backgroundColor = bottomBackColor,
                 cutoutShape = RoundedCornerShape(50),
                 contentColor = Color.White,
                 contentPadding = PaddingValues(horizontal = 8.dp)
@@ -779,9 +770,10 @@ private fun ItemsCalendarMonth(
                     week = week,
                     month = month,
                     selectedDayColor = selectedDayColor,
+                    selectedDayForeColor = selectedDayForeColor,
                     onDayClicked = { day ->
 
-                        onDayClicked(Calendar.getInstance().also { c -> c.set(month.year, month.month.monthNumber() - 1, day.value,0,0,0) }.time)
+                        onDayClicked(Calendar.getInstance().also { c -> c.set(month.year, month.month.monthNumber - 1, day.value,0,0,0) }.time)
                     }
                 )
             }
@@ -810,11 +802,15 @@ fun CalendarPicker(
     headerTextColor: Color = Color.Black,
     headerButtonsBackColor: Color = Color.DarkGray,
     selectedDayBackColor: Color = Color.Green,
+    selectedDayForeColor: Color = Color.Black,
+    bottomBackColor: Color = BlueCalendar,
     onDayClicked: (Date) -> Unit
 ) {
     val viewModel = CalendarViewModel(MainScope().coroutineContext)
 
-    Card(modifier = Modifier.width(200.dp).height(340.dp),
+    Card(modifier = Modifier
+        .width(280.dp)
+        .height(390.dp),
         shape = MaterialTheme.shapes.small,
         elevation = elevation
     ) {
@@ -823,6 +819,8 @@ fun CalendarPicker(
             headerTextColor = headerTextColor,
             headerButtonsBackColor = headerButtonsBackColor,
             selectedDayColor = selectedDayBackColor,
+            selectedDayForeColor = selectedDayForeColor,
+            bottomBackColor = bottomBackColor,
             onDayClicked = onDayClicked)
     }
 
@@ -849,35 +847,44 @@ fun CalendarPicker(
 fun CalendarDropDown(label: String,
                      dateFormat: String = "dd/MM/yyyy",
                      focusRequester: FocusRequester? = null,
-                     editorWidth: Dp,
                      paddingValues: PaddingValues = PaddingValues(0.dp),
-                     textFieldColors: TextFieldColors = TextFieldDefaults.textFieldColors(),
+                     textFieldColors: TextFieldColors = TextFieldDefaults.textFieldColors(backgroundColor = Color.Transparent),
                      date: MutableState<Date?>,
                      readOnly: Boolean = false,
+                     imeAction: ImeAction = ImeAction.Next,
+                     modifier: Modifier = Modifier,
                      headerBackColor: Color = Color.Transparent,
                      headerTextColor: Color = Color.Black,
                      headerButtonsBackColor: Color = Color.DarkGray,
                      selectedDayBackColor: Color = Color.Green,
+                     selectedDayForeColor: Color = Color.Black,
+                     bottomBackColor: Color = BlueCalendar,
                      onDayClicked: (Date) -> Unit){
 
     var dateStr by remember { mutableStateOf(TextFieldValue ("")) }
     var expandedDropDown by remember { mutableStateOf(false) }
     var dropDrownDate by remember { mutableStateOf(Calendar.getInstance().also { c -> c.timeInMillis = 0 }.time) }
 
-    Box(modifier = Modifier.width(editorWidth).padding(paddingValues)){
+    Box(modifier = modifier
+        .padding(paddingValues)){
         OutlinedTextField(value = dateStr,
-            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester ?: FocusRequester.Default),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester ?: FocusRequester.Default),
             label = { Text(label) },
             colors = textFieldColors,
             readOnly = readOnly,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = imeAction),
             singleLine = true,
             trailingIcon = {
                 Icon(imageVector = Icons.Rounded.DateRange,
                     contentDescription = null,
-                    modifier = Modifier.focusable(false).clickable(true) {
-                        if (!readOnly)
-                            expandedDropDown = !expandedDropDown
-                    }
+                    modifier = Modifier
+                        .focusable(false)
+                        .clickable(true) {
+                            if (!readOnly)
+                                expandedDropDown = !expandedDropDown
+                        }
                 )
 
                 DropdownMenu(expanded = expandedDropDown,
@@ -888,6 +895,8 @@ fun CalendarDropDown(label: String,
                         headerTextColor = headerTextColor,
                         headerButtonsBackColor = headerButtonsBackColor,
                         selectedDayBackColor = selectedDayBackColor,
+                        selectedDayForeColor = selectedDayForeColor,
+                        bottomBackColor = bottomBackColor,
                         onDayClicked = { newDate ->
                             dateStr = TextFieldValue(newDate.format(dateFormat))
                             expandedDropDown = false
@@ -944,3 +953,4 @@ fun CalendarDropDown(label: String,
         }
     }
 }
+
