@@ -168,12 +168,104 @@ class MyViewModelService: ViewModelService() {
     ...
     
 }
+
 ```
 
+## Authenticator
+
+Con esta clase, puedes controlar fácilmente la creación y actualización de cuentas de usuario en el sistema de Android AccountManager
+
+**Utilización**:
+
+1. Crea tu propia clase YourOwnAuthenticatorService que hereda de Service.
+
+   1.1. **Sobreescribe el método onBind, con tu propia implementación de Authenticator**:
+
+```kotlin
+        override fun onBind(intent: Intent?) = Authenticator(
+               this,
+               YourLoginActivity::class.java,
+               R.string.your_account_type_name_resource_id,
+               R.string.your_custom_message_on_single_account_error,
+               R.string.your_custom_message_on_unsupported_account_error,
+               R.string.your_custom_message_on_unsupported_token_error,
+               R.string.your_custom_message_on_unsupported_features_error,
+               true/false // true if only one account is allowed, false if app are designed to multiple accounts
+        )
+        
+```
+        
+ 2. **Crea tu propia actividad LoginActivity. Esta actividad necesitará capturar algunos extras de su intent**:
+ 
+      2.1. En el método onCreate, captura algunos de los extras del intent, que nos servirán para preparar la creación o actualización de la cuenta desde la app o desde el AccountManager:
+      
+        2.1.1. Instancia tu propio Authenticator (como en el punto 1.1).
+        
+        4.1.2. Carga los datos necesarios desde this.intent.extras:
+                
+```kotlin      
+        this.fromApp = try{ (this.intent.extras!![Authenticator.ACTION_LOGIN_TYPE] as AuthenticatorLoginType) == AuthenticatorLoginType.App} catch(_: Exception){ false }
+        this.loginUser = try{ this.intent.getSerializableExtra(Authenticator.KEY_ACCOUNT) as YourAppAccount<b>IUser</b> }catch(_: Exception { null }        
+```     
+
+        2.1.3. Normalmente en un alta, limpiarás todos los campos de login.
+
+        2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2)
+
+        2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:
+            
+```kotlin
+       this.authenticator.saveUserAccount(this, R.string.your_account_type_name_resource_id, this.loginUser)            
+```
+
+3. **En tu AndroidManifest.xml se necesita hacer algunas cosas**
+     3.1. Agrega algunos permisos:
+     
+```xml
+
+             <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+             <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+             <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+             <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+             <uses-permission android:name="android.permission.READ_PROFILE" />
+```
+     
+     3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>
+     
+```xml
+            <service android:name=".auth.YourOwnAuthenticator" exported="true">
+                 <intent-filter>
+                      <action android:name="android.accounts.AccountAuthenticator" />
+                  </intent-filter>
+
+                  <meta-data
+                      android:name="android.accounts.AccountAuthenticator"
+                      android:resource="@xml/authenticator" />
+            </service>
+  
+```
+  
+ 4. **Agrega un recurso en la ruta xml/authenticator.xml, con el siguiente contenido**:
+  
+```xml
+  
+      <xml version="1.0" encoding="UTF-8"?>
+
+      <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+
+              android:accountType="@string/your_account_type_name_resource_id"
+              android:icon="@mipmap/ic_launcher"
+              android:label="@string/app_name"
+              android:smallIcon="@mipmap/ic_launcher">
+      </account-authenticator>
+        
+```
+ 
+**¡ Y ESTO ES TODO!**
 
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.3.1'
+implementation 'io.github.afalabarce:jetpackcompose:1.3.2'
 ```
 
