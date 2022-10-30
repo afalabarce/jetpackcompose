@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
 import io.github.afalabarce.jetpackcompose.authmanager.entities.IUser
 import io.github.afalabarce.jetpackcompose.authmanager.enums.LoginType
