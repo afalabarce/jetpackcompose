@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene siete composables (por ahora) útiles para el día a día.  
+Contiene ocho composables (por ahora) útiles para el día a día.  
   
  El primero de los composables es CalendarDropDown, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual.  
  
@@ -171,6 +171,96 @@ class MyViewModelService: ViewModelService() {
 
 ```
 
+##PolygonalProgressBar
+
+Este composable permite de una forma muy sencilla la utilización de progressbar con diseño poligonal, soporta desde 0 vértices (una circunferencia) hasta n vértices, con un mínimo de 3 (un triángulo).
+
+Un vídeo del funcionamiento de este composable se puede ver en [Youtube](https://www.youtube.com/watch?v=ilMw3KR6Nvk)
+
+Y el ejemplo de código mostrado en el vídeo sería el siguiente:
+
+```kotlin
+@Composable
+fun TestPolygon(){
+    val infiniteTransition = rememberInfiniteTransition()
+    var progress by remember { mutableStateOf(0f) }
+    val progressFinite by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 100f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        )
+    )
+
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "Circular Infinite Progressbar", fontSize = 14.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        PolygonalProgressBar(
+            modifier = Modifier.size(120.dp),
+            size = 90.dp,
+            vertexNumber = 0,
+            stroke = 16f,
+            isInfinite = true,
+            infiniteDelayInMillis = 1500,
+        )
+
+        Text(text = "Polygonal Infinite Progressbar", fontSize = 14.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        PolygonalProgressBar(
+            modifier = Modifier.size(120.dp),
+            size = 90.dp,
+            vertexNumber = 7,
+            stroke = 16f,
+            isInfinite = true,
+            infiniteDelayInMillis = 1100,
+        )
+
+        Text(text = "Pulsation Progressbar", fontSize = 14.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        PolygonalProgressBar(
+            modifier = Modifier.size(120.dp),
+            size = 90.dp,
+            vertexNumber = 7,
+            stroke = 16f,
+            isPulsation = true,
+            pulsationTimeInMillis = 1000
+        )
+
+        Text(text = progress.toString(), modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        Slider(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            value = progress,
+            onValueChange = { value ->
+                progress = value.round(2)
+            },
+        )
+
+        Text(text = "Circular Deterministic Progressbar", fontSize = 14.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        PolygonalProgressBar(
+            modifier = Modifier.size(120.dp),
+            size = 90.dp,
+            vertexNumber = 0,
+            progress = progress,
+            stroke = 16f,
+            isInfinite = false,
+            infiniteDelayInMillis = 1100,
+        )
+
+        Text(text = "Polygonal Deterministic Progressbar", fontSize = 14.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+        PolygonalProgressBar(
+            modifier = Modifier.size(120.dp),
+            rotationDegress = 13f,
+            size = 90.dp,
+            vertexNumber = 9,
+            progress = progress,
+            stroke = 16f,
+            isInfinite = false,
+            infiniteDelayInMillis = 1100,
+        )
+    }
+}
+
+```
+
+
 ## Authenticator
 
 Con esta clase, puedes controlar fácilmente la creación y actualización de cuentas de usuario en el sistema de Android AccountManager
@@ -266,6 +356,6 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.3.2'
+implementation 'io.github.afalabarce:jetpackcompose:1.3.3'
 ```
 
