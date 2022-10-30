@@ -171,7 +171,7 @@ class MyViewModelService: ViewModelService() {
 
 ```
 
-##PolygonalProgressBar
+## PolygonalProgressBar
 
 Este composable permite de una forma muy sencilla la utilización de progressbar con diseño poligonal, soporta desde 0 vértices (una circunferencia) hasta n vértices, con un mínimo de 3 (un triángulo).
 
