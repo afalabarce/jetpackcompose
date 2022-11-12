@@ -303,6 +303,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
         2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2).  
 
         2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:  
+        
             
 ```kotlin
        this.authenticator.saveUserAccount(this, R.string.your_account_type_name_resource_id, this.loginUser)            
