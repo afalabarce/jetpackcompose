@@ -149,15 +149,15 @@ Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal
         }
     }
         
- ```
+ ```  
    
-Como podemos ver, el funcionamiento es bastante simple...
+Como podemos ver, el funcionamiento es bastante simple...  
 
-Espero que sea de ayuda, tanto didácticamente, como para su uso en tus apps...
+Espero que sea de ayuda, tanto didácticamente, como para su uso en tus apps...  
 
-Otro elemento que se peude obtener en el módulo es un ViewModelService, esto es, permite la creación de servicios que pueden suscribirse a ViewModels que nos van a permitir el acceso reactivo a bases de datos (por ejemplo).
+Otro elemento que se peude obtener en el módulo es un ViewModelService, esto es, permite la creación de servicios que pueden suscribirse a ViewModels que nos van a permitir el acceso reactivo a bases de datos (por ejemplo).  
 
-Un ejemplo de uso de ViewModelService sería el siguiente:
+Un ejemplo de uso de ViewModelService sería el siguiente:  
 
 ```kotlin
 @AndroidEntryPoint
@@ -169,15 +169,15 @@ class MyViewModelService: ViewModelService() {
     
 }
 
-```
+```  
 
 ## PolygonalProgressBar
 
-Este composable permite de una forma muy sencilla la utilización de progressbar con diseño poligonal, soporta desde 0 vértices (una circunferencia) hasta n vértices, con un mínimo de 3 (un triángulo).
+Este composable permite de una forma muy sencilla la utilización de progressbar con diseño poligonal, soporta desde 0 vértices (una circunferencia) hasta n vértices, con un mínimo de 3 (un triángulo).  
 
-Un vídeo del funcionamiento de este composable se puede ver en [Youtube](https://www.youtube.com/watch?v=ilMw3KR6Nvk)
+Un vídeo del funcionamiento de este composable se puede ver en [Youtube](https://www.youtube.com/watch?v=ilMw3KR6Nvk).  
 
-Y el ejemplo de código mostrado en el vídeo sería el siguiente:
+Y el ejemplo de código mostrado en el vídeo sería el siguiente:  
 
 ```kotlin
 @Composable
@@ -258,18 +258,18 @@ fun TestPolygon(){
     }
 }
 
-```
+```   
 
 
 ## Authenticator
 
-Con esta clase, puedes controlar fácilmente la creación y actualización de cuentas de usuario en el sistema de Android AccountManager
+Con esta clase, puedes controlar fácilmente la creación y actualización de cuentas de usuario en el sistema de Android AccountManager  
 
 **Utilización**:
 
-1. Crea tu propia clase YourOwnAuthenticatorService que hereda de Service.
+1. Crea tu propia clase YourOwnAuthenticatorService que hereda de Service.  
 
-   1.1. **Sobreescribe el método onBind, con tu propia implementación de Authenticator**:
+   1.1. **Sobreescribe el método onBind, con tu propia implementación de Authenticator**:  
 
 ```kotlin
         override fun onBind(intent: Intent?) = Authenticator(
@@ -283,33 +283,33 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
                true/false // true if only one account is allowed, false if app are designed to multiple accounts
         )
         
-```
+```  
         
- 2. **Crea tu propia actividad LoginActivity. Esta actividad necesitará capturar algunos extras de su intent**:
+ 2. **Crea tu propia actividad LoginActivity. Esta actividad necesitará capturar algunos extras de su intent**:  
  
-      2.1. En el método onCreate, captura algunos de los extras del intent, que nos servirán para preparar la creación o actualización de la cuenta desde la app o desde el AccountManager:
+      2.1. En el método onCreate, captura algunos de los extras del intent, que nos servirán para preparar la creación o actualización de la cuenta desde la app o desde el AccountManager:  
       
-        2.1.1. Instancia tu propio Authenticator (como en el punto 1.1).
+        2.1.1. Instancia tu propio Authenticator (como en el punto 1.1).  
         
-        4.1.2. Carga los datos necesarios desde this.intent.extras:
+        4.1.2. Carga los datos necesarios desde this.intent.extras:  
                 
 ```kotlin      
         this.fromApp = try{ (this.intent.extras!![Authenticator.ACTION_LOGIN_TYPE] as AuthenticatorLoginType) == AuthenticatorLoginType.App} catch(_: Exception){ false }
         this.loginUser = try{ this.intent.getSerializableExtra(Authenticator.KEY_ACCOUNT) as YourAppAccount<b>IUser</b> }catch(_: Exception { null }        
 ```     
 
-        2.1.3. Normalmente en un alta, limpiarás todos los campos de login.
+        2.1.3. Normalmente en un alta, limpiarás todos los campos de login.  
 
-        2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2)
+        2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2).  
 
-        2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:
+        2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:  
             
 ```kotlin
        this.authenticator.saveUserAccount(this, R.string.your_account_type_name_resource_id, this.loginUser)            
-```
+```  
 
-3. **En tu AndroidManifest.xml se necesita hacer algunas cosas**
-     3.1. Agrega algunos permisos:
+3. **En tu AndroidManifest.xml se necesita hacer algunas cosas**   
+     3.1. Agrega algunos permisos:  
      
 ```xml
 
@@ -318,9 +318,9 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
              <uses-permission android:name="android.permission.USE_CREDENTIALS" />
              <uses-permission android:name="android.permission.GET_ACCOUNTS" />
              <uses-permission android:name="android.permission.READ_PROFILE" />
-```
+```   
      
-     3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>
+     3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>   
      
 ```xml
             <service android:name=".auth.YourOwnAuthenticator" exported="true">
@@ -333,9 +333,9 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
                       android:resource="@xml/authenticator" />
             </service>
   
-```
+```   
   
- 4. **Agrega un recurso en la ruta xml/authenticator.xml, con el siguiente contenido**:
+ 4. **Agrega un recurso en la ruta xml/authenticator.xml, con el siguiente contenido**:   
   
 ```xml
   
@@ -349,13 +349,14 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
               android:smallIcon="@mipmap/ic_launcher">
       </account-authenticator>
         
-```
+```   
  
-**¡ Y ESTO ES TODO!**
+**¡ Y ESTO ES TODO!**   
 
-Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
+Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:   
 
 ```
 implementation 'io.github.afalabarce:jetpackcompose:1.3.3'
-```
+```   
 
+Si piensas que me merezco un café, puedes hacerme un [PayPalMe](https://www.paypal.com/paypalme/afalabarce)
