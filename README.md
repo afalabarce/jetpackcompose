@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene siete composables (por ahora) útiles para el día a día.  
+Contiene ocho composables (por ahora) útiles para el día a día.  
   
  El primero de los composables es CalendarDropDown, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual.  
  
@@ -18,6 +18,27 @@ El sexto, es un AlertDialog Sin paddings, el cual nos permite personalizar much�
 
 El septimo, Un Canvas de dibujo que nos permite dibujar líneas y agregar una marca de agua, delante o detrás de los trazos, a fin de que por ejemplo, podamos emular una firma con un sello.
 
+El octavo, un BottomSheetDialog (BottomSheetDialogMaterial3), es un bottomsheet basico para Material3. Se ha implementado debido a la ausencia de un BottomSheetDialog propio para Jetpackcompose material3. Su definición es la siguiente:
+
+```kotlin
+fun BottomSheetDialogMaterial3(
+    isVisible: Boolean,
+    slideTimeInMillis: Int = 800,
+    backDropColor: Color = Color(0x44444444),
+    dialogShape: Shape = MaterialTheme.shapes.medium.copy(
+        bottomEnd = CornerSize(0),
+        bottomStart = CornerSize(0)
+    ),
+    dialogElevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    dialogBorderStroke: BorderStroke? = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+    cardColors: CardColors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.background),
+    onDismissRequest: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    // Aquí tú código
+}
+```
+
 Además se agrega una extensión a Modifier que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
@@ -26,128 +47,136 @@ Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal
  
  ```kotlin
  // Función que nos devuelve todas las posibles acciones de un objeto Task, en función de sus posibilidades
- private fun taskActions(task: Task): Array<SwipeAction>{
-        return arrayOf(SwipeAction(
-            order = if (task.task.isOpen && !task.isWorking) 0 else -1,
-            key = "StartTimeLapse",
-            title = "Iniciar",
-            imageVector = Icons.Filled.PunchClock,
-            color = DarkBlue,
-            tint = White,
-            true
-        ),
-            SwipeAction(
-                order = if (task.task.isOpen && task.isWorking) 0 else -1,
-                key = "ShowTimeLapse",
-                title = "Ver",
-                imageVector = Icons.Filled.PunchClock,
-                color = DarkGreen,
-                tint = White,
-                true
-            ),
-            SwipeAction(
-                order = if (task.task.isOpen) 0 else -1,
-                key = "Modify",
-                title = "Editar",
-                imageVector = Icons.Filled.Edit,
-                color = DarkGreen,
-                tint = White,
-                false
-            ),
-            SwipeAction(
-                order = if (!task.withTimeLapse) 1 else -1,
-                key = "Delete",
-                title = "Borrar",
-                imageVector = Icons.Filled.Delete,
-                color = Red,
-                tint = White,
-                false
-            ),
-            SwipeAction(
-                order = if (task.task.isOpen) 2 else -1,
-                key = "End",
-                title = "Fin",
-                imageVector = Icons.Filled.Close,
-                color = DarkBlue,
-                tint = White,
-                false
-            ),
-            SwipeAction(
-                //order = if (!task.task.isOpen || (task.withTimeLapse && !task.isWorking)) 2 else -1,
-                order = if (task.withTimeLapse && !task.isWorking) 2 else -1,
-                key = "ShowResume",
-                title = "Resumen",
-                imageVector = Icons.Filled.Checklist,
-                color = DarkOrange,
-                tint = White,
-                true
-            )
-        ).filter {  x -> x.order >= 0 }.toTypedArray()
-        
-        
+ private fun taskActions(task: Task): Array<SwipeAction> {
+     return arrayOf(
+         SwipeAction(
+             order = if (task.task.isOpen && !task.isWorking) 0 else -1,
+             key = "StartTimeLapse",
+             title = "Iniciar",
+             imageVector = Icons.Filled.PunchClock,
+             color = DarkBlue,
+             tint = White,
+             true
+         ),
+         SwipeAction(
+             order = if (task.task.isOpen && task.isWorking) 0 else -1,
+             key = "ShowTimeLapse",
+             title = "Ver",
+             imageVector = Icons.Filled.PunchClock,
+             color = DarkGreen,
+             tint = White,
+             true
+         ),
+         SwipeAction(
+             order = if (task.task.isOpen) 0 else -1,
+             key = "Modify",
+             title = "Editar",
+             imageVector = Icons.Filled.Edit,
+             color = DarkGreen,
+             tint = White,
+             false
+         ),
+         SwipeAction(
+             order = if (!task.withTimeLapse) 1 else -1,
+             key = "Delete",
+             title = "Borrar",
+             imageVector = Icons.Filled.Delete,
+             color = Red,
+             tint = White,
+             false
+         ),
+         SwipeAction(
+             order = if (task.task.isOpen) 2 else -1,
+             key = "End",
+             title = "Fin",
+             imageVector = Icons.Filled.Close,
+             color = DarkBlue,
+             tint = White,
+             false
+         ),
+         SwipeAction(
+             //order = if (!task.task.isOpen || (task.withTimeLapse && !task.isWorking)) 2 else -1,
+             order = if (task.withTimeLapse && !task.isWorking) 2 else -1,
+             key = "ShowResume",
+             title = "Resumen",
+             imageVector = Icons.Filled.Checklist,
+             color = DarkOrange,
+             tint = White,
+             true
+         )
+     ).filter { x -> x.order >= 0 }.toTypedArray()
+
+
      // Función que pintaría el SwipeableCard, se integraría por ejemplo en un LazyColumn
      fun TaskItem(task: Task) {
-        val tasksActions = this.taskActions(task)
-        SwipeableCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(96.dp)
-                .padding(3.dp),
-            shape = MaterialTheme.shapes.small,
-            anchors = getAnchorMap(LocalDensity.current, 82.dp, tasksActions),
-            elevation = 3.dp,
-            buttonWidth = 82.dp,
-            border = BorderStroke(1.dp, color = Color.LightGray),
-            swipeActions = tasksActions
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(96.dp)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Box(modifier = Modifier.size(64.dp)) {
-                        Icon(
-                            imageVector =  if (task.isWorking) Icons.Filled.PunchClock else Icons.Filled.Task,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = if (task.task.isOpen && !task.isWorking) DarkGreen else if (task.isWorking) DarkBlue else Color.Red
-                        )
+         val tasksActions = this.taskActions(task)
+         SwipeableCard(
+             modifier = Modifier
+                 .fillMaxWidth()
+                 .height(96.dp)
+                 .padding(3.dp),
+             shape = MaterialTheme.shapes.small,
+             anchors = getAnchorMap(LocalDensity.current, 82.dp, tasksActions),
+             elevation = 3.dp,
+             buttonWidth = 82.dp,
+             border = BorderStroke(1.dp, color = Color.LightGray),
+             swipeActions = tasksActions
+         ) {
+             Row(
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .height(96.dp)
+             ) {
+                 Column(
+                     modifier = Modifier.fillMaxHeight(),
+                     verticalArrangement = Arrangement.Center
+                 ) {
+                     Box(modifier = Modifier.size(64.dp)) {
+                         Icon(
+                             imageVector = if (task.isWorking) Icons.Filled.PunchClock else Icons.Filled.Task,
+                             contentDescription = null,
+                             modifier = Modifier.size(64.dp),
+                             tint = if (task.task.isOpen && !task.isWorking) DarkGreen else if (task.isWorking) DarkBlue else Color.Red
+                         )
 
-                        if (task.withTimeLapse){
-                            Box(modifier = Modifier.size(28.dp).shadow(
-                                elevation = 1.dp,
-                                shape = RoundedCornerShape(5.dp)
-                            ).background(DarkOrange).align(Alignment.BottomEnd),
-                            contentAlignment = Alignment.Center){
-                                Icon(
-                                    imageVector =  Icons.Filled.PunchClock,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp),
-                                    tint = White
-                                )
-                            }
+                         if (task.withTimeLapse) {
+                             Box(
+                                 modifier = Modifier.size(28.dp).shadow(
+                                     elevation = 1.dp,
+                                     shape = RoundedCornerShape(5.dp)
+                                 ).background(DarkOrange).align(Alignment.BottomEnd),
+                                 contentAlignment = Alignment.Center
+                             ) {
+                                 Icon(
+                                     imageVector = Icons.Filled.PunchClock,
+                                     contentDescription = null,
+                                     modifier = Modifier.size(24.dp),
+                                     tint = White
+                                 )
+                             }
 
-                        }
-                    }
-                }
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Text(text = task.task.title, style = MaterialTheme.typography.body1)
-                    Text(
-                        text = "${stringResource(R.string.project_label)} ${task.task.project}",
-                        style = MaterialTheme.typography.caption
-                    )
-                    Text(
-                        text = "${stringResource(R.string.creation_date_title)} ${task.task.creationDate.format("dd/MM/yyyy HH:mm")}",
-                        style = MaterialTheme.typography.body2
-                    )
-                }
-            }
-        }
-    }
+                         }
+                     }
+                 }
+                 Column(modifier = Modifier.fillMaxSize()) {
+                     Text(text = task.task.title, style = MaterialTheme.typography.body1)
+                     Text(
+                         text = "${stringResource(R.string.project_label)} ${task.task.project}",
+                         style = MaterialTheme.typography.caption
+                     )
+                     Text(
+                         text = "${stringResource(R.string.creation_date_title)} ${
+                             task.task.creationDate.format(
+                                 "dd/MM/yyyy HH:mm"
+                             )
+                         }",
+                         style = MaterialTheme.typography.body2
+                     )
+                 }
+             }
+         }
+     }
+ }
         
  ```
    
@@ -196,42 +225,42 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 ```
         
  2. **Crea tu propia actividad LoginActivity. Esta actividad necesitará capturar algunos extras de su intent**:
- 
-      2.1. En el método onCreate, captura algunos de los extras del intent, que nos servirán para preparar la creación o actualización de la cuenta desde la app o desde el AccountManager:
-      
-        2.1.1. Instancia tu propio Authenticator (como en el punto 1.1).
-        
-        4.1.2. Carga los datos necesarios desde this.intent.extras:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1. En el método onCreate, captura algunos de los extras del intent, que nos servirán para preparar la creación o actualización de la cuenta desde la app o desde el AccountManager:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1. Instancia tu propio Authenticator (como en el punto 1.1).
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2. Carga los datos necesarios desde this.intent.extras:
                 
 ```kotlin      
         this.fromApp = try{ (this.intent.extras!![Authenticator.ACTION_LOGIN_TYPE] as AuthenticatorLoginType) == AuthenticatorLoginType.App} catch(_: Exception){ false }
         this.loginUser = try{ this.intent.getSerializableExtra(Authenticator.KEY_ACCOUNT) as YourAppAccount<b>IUser</b> }catch(_: Exception { null }        
 ```     
 
-        2.1.3. Normalmente en un alta, limpiarás todos los campos de login.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.3. Normalmente en un alta, limpiarás todos los campos de login.
 
-        2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.4. Normalmente, si actualizas los datos de un usuario, lo harás cargando this.loginUser (extraido en 2.1.2)
 
-        2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.5. Si el login ha sido correcto, guardaremos la cuenta en el sistema de cuentas de Android AccountManager:
             
 ```kotlin
        this.authenticator.saveUserAccount(this, R.string.your_account_type_name_resource_id, this.loginUser)            
 ```
 
 3. **En tu AndroidManifest.xml se necesita hacer algunas cosas**
-     3.1. Agrega algunos permisos:
-     
-```xml
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1. Agrega algunos permisos: 
+```xml
              <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
              <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
              <uses-permission android:name="android.permission.USE_CREDENTIALS" />
              <uses-permission android:name="android.permission.GET_ACCOUNTS" />
              <uses-permission android:name="android.permission.READ_PROFILE" />
 ```
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>
      
-     3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>
-     
+
 ```xml
             <service android:name=".auth.YourOwnAuthenticator" exported="true">
                  <intent-filter>
@@ -266,6 +295,6 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.3.2'
+implementation 'io.github.afalabarce:jetpackcompose:1.3.4'
 ```
 
