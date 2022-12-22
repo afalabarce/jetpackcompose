@@ -118,8 +118,10 @@ fun SvgPickerSelector(
         "${Environment.getExternalStorageDirectory().absolutePath}${File.separator}${Environment.DIRECTORY_DOWNLOADS}"
     ),
     thumbnailPadding: PaddingValues = PaddingValues(4.dp),
+    onClickGiveMoreIcons: () -> Unit,
     onClickedItem: (ByteArray) -> Unit
 ){
+    val context = LocalContext.current
     val viewModel by remember{ mutableStateOf(SvgPickerViewModel(svgIconsPaths)) }
     val grantedPermission = rememberPermissionState(permission = android.Manifest.permission.READ_EXTERNAL_STORAGE)
     if (grantedPermission.status != PermissionStatus.Granted){
@@ -140,7 +142,7 @@ fun SvgPickerSelector(
         Button(
             modifier = Modifier.fillMaxWidth(0.8f),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            onClick = { /*TODO*/ }
+            onClick = onClickGiveMoreIcons,
         ) {
             Text(text = stringResource(id = giveMeMoreIconsTitle))
         }
