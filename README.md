@@ -173,7 +173,7 @@ fun BottomSheetDialogMaterial3(
 9. **SvgPickerSelector**, nos permite, mediante un FileWatcher monitorizar una serie de carpetas en la 
 búsqueda de ficheros SVG, a fin de poder seleccionar uno de ellos para cargarlos en un AsyncImage. 
 Este ha obligado a añadir una referencia a la libería de imágenes [Coil para compose](https://coil-kt.github.io/coil/compose/)). 
-En la captura siguiente se puede ver en conjunto con BottomSheetMaterial3.  
+En la captura siguiente se puede ver en conjunto con BottomSheetDialogMaterial3.  
 
 <img src="img.png" width="300px" style="display: block; margin: 0 auto"/>
 
