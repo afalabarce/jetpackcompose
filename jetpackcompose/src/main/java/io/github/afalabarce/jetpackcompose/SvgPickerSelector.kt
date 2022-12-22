@@ -121,7 +121,6 @@ fun SvgPickerSelector(
     onClickGiveMoreIcons: () -> Unit,
     onClickedItem: (ByteArray) -> Unit
 ){
-    val context = LocalContext.current
     val viewModel by remember{ mutableStateOf(SvgPickerViewModel(svgIconsPaths)) }
     val grantedPermission = rememberPermissionState(permission = android.Manifest.permission.READ_EXTERNAL_STORAGE)
     if (grantedPermission.status != PermissionStatus.Granted){
