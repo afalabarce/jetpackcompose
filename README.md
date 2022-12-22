@@ -1,50 +1,16 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene ocho composables (por ahora) útiles para el día a día.  
-  
- El primero de los composables es CalendarDropDown, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual.  
- 
- El segundo composable, relacionado con el primero, es un Calendar (que nos permite colocar un calendario directamente en nuestra app.  
-  
- El tercer composable, es un SwipeableCard, es un Card, que nos permite agregarle acciones en Swipe horizontal, tanto a izquierda como a derecha.   
+Contiene nueve composables (por ahora) útiles para el día a día:  
+
+1. **CalendarDropDown**, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual. 
+Se puede ver un pequeño video de ejemplo en [Youtube](https://www.youtube.com/watch?v=r2m9KNps4NY) (realizado para Compose4Desktop, pero totalmente compatible con Compose Android). 
+2. **Calendar**, relacionado con el primero (que nos permite colocar un calendario directamente en nuestra app.
+3. **SwipeableCard**, es un Card, que nos permite agregarle acciones en Swipe horizontal, tanto a izquierda como a derecha.   
  Debido a errores extraños he tenido que establecer en el composable el mapAnchors (el que se encarga de decirle al composable cuanto debe desplazar el Card a izquierda o derecha) desde la propia llamada.
-
- El cuarto composable, es un CircularProgressIndicator, que permite en una única llamada establecer un background al toroide del progreso según va decrementando. Además agrega un campo content que nos permite meter un composable en el interior.  
-
-El quinto, es un LabelledSwitch, que nos permite utilizar un Switch con su label a la izquierda (además de un leadingIcon).
-
-El sexto, es un AlertDialog Sin paddings, el cual nos permite personalizar muchísimo la apariencia de nuestros alertdialog.
-
-El septimo, Un Canvas de dibujo que nos permite dibujar líneas y agregar una marca de agua, delante o detrás de los trazos, a fin de que por ejemplo, podamos emular una firma con un sello.
-
-El octavo, un BottomSheetDialog (BottomSheetDialogMaterial3), es un bottomsheet basico para Material3. Se ha implementado debido a la ausencia de un BottomSheetDialog propio para Jetpackcompose material3. Su definición es la siguiente:
-
-```kotlin
-fun BottomSheetDialogMaterial3(
-    isVisible: Boolean,
-    slideTimeInMillis: Int = 800,
-    backDropColor: Color = Color(0x44444444),
-    dialogShape: Shape = MaterialTheme.shapes.medium.copy(
-        bottomEnd = CornerSize(0),
-        bottomStart = CornerSize(0)
-    ),
-    dialogElevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-    dialogBorderStroke: BorderStroke? = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
-    cardColors: CardColors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.background),
-    onDismissRequest: () -> Unit = {},
-    content: @Composable () -> Unit
-) {
-    // Aquí tú código
-}
-```
-
-Además se agrega una extensión a Modifier que permite poner un borde punteado a cualquier composable.
-
-Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
-
+ Se puede ver un pequeño video de este Composable en [Youtube](https://www.youtube.com/watch?v=tBkPXBNOzfw).
  Un ejemplo de llamada de SwipeableCard, sería el siguiente:
- 
+
  ```kotlin
  // Función que nos devuelve todas las posibles acciones de un objeto Task, en función de sus posibilidades
  private fun taskActions(task: Task): Array<SwipeAction> {
@@ -179,12 +145,45 @@ Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal
  }
         
  ```
-   
-Como podemos ver, el funcionamiento es bastante simple...
+
+4. **CircularProgressIndicator**, que permite en una única llamada establecer un background al toroide del progreso según va decrementando. Además agrega un campo content que nos permite meter un composable en el interior.
+5. **LabelledSwitch**, que nos permite utilizar un Switch con su label a la izquierda (además de un leadingIcon).
+6. **NoPaddingAlertDialog**, es un AlertDialog Sin paddings, el cual nos permite personalizar muchísimo la apariencia de nuestros alertdialog.
+7. **DrawCanvas**, es un Canvas de dibujo que nos permite dibujar líneas y agregar una marca de agua, delante o detrás de los trazos, a fin de que por ejemplo, podamos emular una firma con un sello. 
+ Se puede ver un pequeño vídeo de ejemplo en [Youtube](https://www.youtube.com/watch?v=0pMQPTLKKuQ)
+8. **BottomSheetDialogMaterial3**, es un BottomSheetDialog básico para Material3. Se ha implementado debido a la ausencia de un BottomSheetDialog propio para Jetpackcompose material3. Su definición es la siguiente:
+```kotlin
+fun BottomSheetDialogMaterial3(
+    isVisible: Boolean,
+    slideTimeInMillis: Int = 800,
+    backDropColor: Color = Color(0x44444444),
+    dialogShape: Shape = MaterialTheme.shapes.medium.copy(
+        bottomEnd = CornerSize(0),
+        bottomStart = CornerSize(0)
+    ),
+    dialogElevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    dialogBorderStroke: BorderStroke? = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
+    cardColors: CardColors = CardDefaults.cardColors(contentColor = MaterialTheme.colorScheme.background),
+    onDismissRequest: () -> Unit = {},
+    content: @Composable () -> Unit
+) {
+    // Aquí tú código
+}
+```
+9. **SvgPickerSelector**, nos permite, mediante un FileWatcher monitorizar una serie de carpetas en la 
+búsqueda de ficheros SVG, a fin de poder seleccionar uno de ellos para cargarlos en un AsyncImage. 
+Este ha obligado a añadir una referencia a la libería de imágenes [Coil para compose](https://coil-kt.github.io/coil/compose/)). 
+En la captura siguiente se puede ver en conjunto con BottomSheetMaterial3.  
+
+<img src="img.png" width="300px" style="display: block; margin: 0 auto"/>
+
+Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
+
+Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
 
 Espero que sea de ayuda, tanto didácticamente, como para su uso en tus apps...
 
-Otro elemento que se peude obtener en el módulo es un ViewModelService, esto es, permite la creación de servicios que pueden suscribirse a ViewModels que nos van a permitir el acceso reactivo a bases de datos (por ejemplo).
+Otro elemento que se puede obtener en el módulo es un ViewModelService, esto es, permite la creación de servicios que pueden suscribirse a ViewModels que nos van a permitir el acceso reactivo a bases de datos (por ejemplo).
 
 Un ejemplo de uso de ViewModelService sería el siguiente:
 
@@ -295,6 +294,6 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.3.4'
+implementation 'io.github.afalabarce:jetpackcompose:1.3.5'
 ```
 
