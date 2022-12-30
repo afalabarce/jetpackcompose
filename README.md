@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene nueve composables (por ahora) útiles para el día a día:  
+Contiene diez composables (por ahora) útiles para el día a día:  
 
 1. **CalendarDropDown**, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual. 
 Se puede ver un pequeño video de ejemplo en [Youtube](https://www.youtube.com/watch?v=r2m9KNps4NY) (realizado para Compose4Desktop, pero totalmente compatible con Compose Android). 
@@ -176,6 +176,85 @@ Este ha obligado a añadir una referencia a la libería de imágenes [Coil para 
 En la captura siguiente se puede ver en conjunto con BottomSheetDialogMaterial3.  
 
 <img src="img.png" width="300px" style="display: block; margin: 0 auto"/>
+
+10. **CardPager**, es un Card cuya principal característica es que no tiene un content como tal, sino que se le 
+agrega un array de composables que serán los contenidos de dicho Card. Su firma es la siguiente:
+
+```kotlin
+fun CardPager(
+    modifier: Modifier,
+    shape: Shape = MaterialTheme.shapes.medium,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    contentColor: Color = contentColorFor(backgroundColor),
+    showPagerIndicator: Boolean = true,
+    pagerIndicatorActiveColor: Color = Color.Black,
+    pagerIndicatorInactiveColor: Color = Color.Gray,
+    border: BorderStroke? = null,
+    elevation: Dp = 1.dp,
+    pageComposables: Array<@Composable () -> Unit>
+)
+```
+
+A continuación veamos un ejemplo de uso, con lo que sería la clásica función Preview:
+
+```kotlin
+@Preview(showSystemUi = true)
+@Composable
+private fun CardPagerPreview(){
+    MaterialTheme{
+        Surface{
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
+                verticalArrangement = Arrangement.Top) {
+                CardPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp)
+                        .padding(vertical = 4.dp),
+                    border = BorderStroke(1.dp, Color.Black),
+                    pageComposables = arrayOf(
+                        {
+                            Text(text = "Page 1.1")
+                        },
+                        {
+                            Text(text = "Page 1.2")
+                        },
+                        {
+                            Text(text = "Page 1.3")
+                        }
+                    )
+                )
+
+                CardPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(96.dp)
+                        .padding(vertical = 4.dp),
+                    border = BorderStroke(1.dp, Color.Black),
+                    pagerIndicatorActiveColor = Color.Red,
+                    pagerIndicatorInactiveColor = Color.Cyan,
+                    pageComposables = arrayOf(
+                        {
+                            Text(text = "Page 2.1")
+                        },
+                        {
+                            Text(text = "Page 2.2")
+                        },
+                        {
+                            Text(text = "Page 2.3")
+                        }
+                    )
+                )
+            }
+        }
+    }
+}
+```
+
+Cuyo resultado, sería el siguiente:
+
+<img src="img_1.png" width="300px" style="display: block; margin: 0 auto"/>
 
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
