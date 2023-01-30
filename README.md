@@ -1,7 +1,7 @@
 # jetpackcompose
 Jetpack Compose Composables. 
 
-Contiene diez composables (por ahora) útiles para el día a día:  
+Contiene once composables (por ahora) útiles para el día a día:  
 
 1. **CalendarDropDown**, que nos genera el típico desplegable con un calendario en el que seleccionar una fecha. Soporta el botón Hoy, para posicionarnos en la fecha actual. 
 Se puede ver un pequeño video de ejemplo en [Youtube](https://www.youtube.com/watch?v=r2m9KNps4NY) (realizado para Compose4Desktop, pero totalmente compatible con Compose Android). 
@@ -256,6 +256,34 @@ Cuyo resultado, sería el siguiente:
 
 <img src="img_1.png" width="300px" style="display: block; margin: 0 auto"/>
 
+11. **FlipCard**, es un composable ideal para implementar una clásica Card con dos caras, las cuales rotan tanto sobre el eje vertical como 
+horizontal, de este modo podemos aplicar efectos de visualización de rotación de elementos ocultos (por ejemplo, la rotación de una tarjeta). 
+Este composable ha sido extraido del siguiente [GIST](https://gist.github.com/fvilarino/92d03574d21755739ce178c5178393ec#file-flip_card_06-kt).
+
+La firma del composable FlipCard es la siguiente (demás de los enumerados que indican la cara a mostra y el tipo de rotación a aplicar ):
+
+```kotlin
+enum class CardFace {
+    Front,
+    Back
+}
+
+enum class RotationAxis {
+    AxisX,
+    AxisY,
+}
+
+fun FlipCard(
+    cardFace: CardFace,
+    onClick: (CardFace) -> Unit,
+    modifier: Modifier = Modifier,
+    axis: RotationAxis = RotationAxis.AxisY,
+    back: @Composable () -> Unit = {},
+    front: @Composable () -> Unit = {},
+)
+
+```
+
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
@@ -373,7 +401,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.3.8'
+implementation 'io.github.afalabarce:jetpackcompose:1.3.9'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
