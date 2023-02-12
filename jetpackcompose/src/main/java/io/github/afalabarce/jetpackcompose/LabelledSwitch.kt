@@ -2,11 +2,14 @@ package io.github.afalabarce.jetpackcompose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -14,6 +17,7 @@ fun LabelledSwitch(
     modifier: Modifier = Modifier,
     checked: Boolean,
     label: String,
+    labelStyle: TextStyle = MaterialTheme.typography.labelMedium,
     leadingIcon: @Composable () -> Unit = {},
     enabled: Boolean = true,
     colors: SwitchColors = SwitchDefaults.colors(),
@@ -45,7 +49,7 @@ fun LabelledSwitch(
                 leadingIcon()
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.body1,
+                    style = labelStyle,
                     modifier = Modifier
                         .padding(end = 16.dp)
                 )
