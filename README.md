@@ -284,6 +284,172 @@ fun FlipCard(
 
 ```
 
+12. **OrbitalMenu**, es un composable ideal para dar un aspecto diferente a nuestras opciones de menú, nos permite mostrar de forma muy visual 
+distintas opciones organizadas en torno a un nucleo y una serie de órbitas, en las cuales, podremos ubicar composables (Satélites)  basándonos
+en los puntos cardinales. En [Youtube](https://www.youtube.com/shorts/ryzLj3UYS-Y) se puede ver un ejemplo de su funcionamiento.
+ Un ejemplo de implementación sería el siguiente (con satélites en cada punto cardinal - TLDR;)
+
+```kotlin
+
+var isExpanding by remember {
+        mutableStateOf(false)
+    }
+    var isFirstExpanded by remember {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+
+    OrbitalMenu(
+        modifier = Modifier.fillMaxSize(),
+        isExpanded = isExpanding,
+        core = {
+            Card(
+                modifier = Modifier
+                    .size(64.dp)
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = null,
+
+                    )
+            }
+        },
+        satellites = listOf(
+            Satellite(
+                satelliteKey = "North",
+                satellitePosition = SatellitePosition.NORTH,
+                orbit = 1,
+            ) {
+                Text(
+                    text = "N",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "East",
+                satellitePosition = SatellitePosition.EAST,
+                orbit = 2,
+            ) {
+                Text(
+                    text = "E",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "South",
+                satellitePosition = SatellitePosition.SOUTH,
+                orbit = 2,
+            ) {
+                Text(
+                    text = "S",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "West",
+                satellitePosition = SatellitePosition.WEST,
+                orbit = 2,
+            ) {
+                Text(
+                    text = "W",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineLarge,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "North East",
+                satellitePosition = SatellitePosition.NORTH_EAST,
+                orbit = 3,
+            ) {
+                Text(
+                    text = "NE",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "South East",
+                satellitePosition = SatellitePosition.SOUTH_EAST,
+                orbit = 3,
+            ) {
+                Text(
+                    text = "SE",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "South West",
+                satellitePosition = SatellitePosition.SOUTH_WEST,
+                orbit = 3,
+            ) {
+                Text(
+                    text = "SW",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+            Satellite(
+                satelliteKey = "North West",
+                satellitePosition = SatellitePosition.NORTH_WEST,
+                orbit = 3,
+            ) {
+                Text(
+                    text = "NW",
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(Color.Red)
+                )
+            },
+        ),
+        onCorePositioned = {
+            if (!isFirstExpanded){
+                isExpanding = true
+                isFirstExpanded = true
+            }
+       },
+        onClickCore = { isExpanding = !isExpanding },
+    ) { clickedSatellite ->
+        Toast.makeText(context, clickedSatellite.satelliteKey, Toast.LENGTH_LONG).show()
+    }
+
+```
+
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
@@ -300,7 +466,7 @@ class MyViewModelService: ViewModelService() {
     
     @Inject lateinit var viewModel: MyServiceViewModel
     
-    ...
+    //...
     
 }
 
@@ -357,11 +523,13 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1. Agrega algunos permisos: 
 ```xml
+    <Manifest>
              <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
              <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
              <uses-permission android:name="android.permission.USE_CREDENTIALS" />
              <uses-permission android:name="android.permission.GET_ACCOUNTS" />
              <uses-permission android:name="android.permission.READ_PROFILE" />
+    </Manifest>
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2. Agrega una referencia a tu servicio YourOwnAuthenticatorService en la sección <application>
@@ -384,7 +552,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
   
 ```xml
   
-      <xml version="1.0" encoding="UTF-8"?>
+      <xml version="1.0" encoding="UTF-8" ?>
 
       <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
 
