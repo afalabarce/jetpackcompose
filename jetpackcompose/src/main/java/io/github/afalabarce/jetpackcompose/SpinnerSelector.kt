@@ -33,6 +33,7 @@ fun <T> SpinnerSelector(
     selectedItem: T? = null,
     expandedTrailingIcon: ImageVector? = null,
     collapsedTrailingIcon: ImageVector? = null,
+    trailingIconTint: Color = MaterialTheme.colorScheme.onBackground,
     accentColor: Color = MaterialTheme.colorScheme.primary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.background,
     items: List<T>,
@@ -68,6 +69,7 @@ fun <T> SpinnerSelector(
                     else
                         collapsedTrailingIcon ?: Icons.Rounded.ArrowDropDown,
                     contentDescription = null,
+                    tint = trailingIconTint,
                     modifier = Modifier.size(32.dp).constrainAs(spinnerIcon){
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
