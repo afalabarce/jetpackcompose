@@ -450,6 +450,27 @@ var isExpanding by remember {
 
 ```
 
+13. **AdmobInterstitialAdvertView**, muestra un intersticial clásico, a pantalla completa, su firma es la siguiente:
+
+```kotlin
+@Composable
+fun AdmobInterstitialAdvertView(adUnitId: String, onInterstitial: (Boolean) -> Unit = {})
+```
+
+14. **AdmobRewardInterstitialAdvertView**,
+
+```kotlin
+@Composable
+fun AdmobRewardInterstitialAdvertView(adUnitId: String, onRewardShown: () -> Unit, onReward: (Boolean) -> Unit = {})
+```
+
+15. **AdmobAdvertView**,
+
+```kotlin
+@Composable
+fun AdmobAdvertView(adUnitId: String, modifier: Modifier = Modifier)
+```
+
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
@@ -569,7 +590,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.4.3'
+implementation 'io.github.afalabarce:jetpackcompose:1.4.5'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)

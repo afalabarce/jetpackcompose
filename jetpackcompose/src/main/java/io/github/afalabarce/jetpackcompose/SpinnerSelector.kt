@@ -1,18 +1,22 @@
 package io.github.afalabarce.jetpackcompose
 
+import android.media.Image
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.ArrowDropUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
+import androidx.constraintlayout.compose.ConstraintLayout
 import io.github.afalabarce.jetpackcompose.utilities.iif
 
 @Composable
@@ -27,6 +31,8 @@ fun <T> SpinnerSelector(
     componentHeight: Dp = 58.dp,
     height: Dp = 160.dp,
     selectedItem: T? = null,
+    expandedTrailingIcon: ImageVector? = null,
+    collapsedTrailingIcon: ImageVector? = null,
     accentColor: Color = MaterialTheme.colorScheme.primary,
     onBackgroundColor: Color = MaterialTheme.colorScheme.background,
     items: List<T>,
@@ -44,18 +50,43 @@ fun <T> SpinnerSelector(
                 if (!readOnly)
                     expandedDropDown = !expandedDropDown
             },
-            modifier = modifier.height(componentHeight).align(Alignment.BottomStart),
+            modifier = modifier
+                .height(componentHeight)
+                .align(Alignment.BottomStart),
             shape = shape,
             colors = colors,
             border = border,
         ) {
-            Row(
+            ConstraintLayout(
                 modifier = Modifier.fillMaxSize(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
             ) {
+                val (spinnerItem, spinnerIcon) = createRefs()
+
+                Icon(
+                    imageVector = if (expandedDropDown)
+                        expandedTrailingIcon ?: Icons.Rounded.ArrowDropUp
+                    else
+                        collapsedTrailingIcon ?: Icons.Rounded.ArrowDropDown,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp).constrainAs(spinnerIcon){
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        end.linkTo(parent.end)
+                    }.focusable(false)
+                    .clickable(true) {
+                        if (!readOnly)
+                            expandedDropDown = !expandedDropDown
+                    }
+                )
+
                 Column(
                     modifier = Modifier
+                        .constrainAs(spinnerItem){
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(spinnerIcon.start)
+                        }
                         .fillMaxWidth(0.93f)
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -65,23 +96,6 @@ fun <T> SpinnerSelector(
                         label()
                     else
                         itemComposable(spinnerValue!!)
-                }
-                Column(
-                    modifier = Modifier
-                        .width(24.dp)
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .focusable(false)
-                            .clickable(true) {
-                                if (!readOnly)
-                                    expandedDropDown = !expandedDropDown
-                            }
-                    )
                 }
             }
 
@@ -94,11 +108,13 @@ fun <T> SpinnerSelector(
                     .padding(8.dp)
                     .verticalScroll(rememberScrollState())) {
                     items.forEach { item ->
-                        Column(modifier = Modifier.fillMaxWidth().clickable {
-                            spinnerValue = item
-                            expandedDropDown = false
-                            onSelectedItem(item)
-                        }) {
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                spinnerValue = item
+                                expandedDropDown = false
+                                onSelectedItem(item)
+                            }) {
                             itemComposable(item)
                         }
                     }
@@ -110,7 +126,8 @@ fun <T> SpinnerSelector(
             Column(
                 modifier = modifier
                     .height((spinnerValue != null).iif(componentHeight.plus(6.dp), componentHeight))
-                    .padding(start = 16.dp).background(Color.Transparent),
+                    .padding(start = 16.dp)
+                    .background(Color.Transparent),
                 verticalArrangement = Arrangement.Top
 
             ) {
@@ -118,7 +135,9 @@ fun <T> SpinnerSelector(
                     text = hintText,
                     style = MaterialTheme.typography.labelSmall,
                     color = accentColor,
-                    modifier = Modifier.background(onBackgroundColor).padding(horizontal = 4.dp)
+                    modifier = Modifier
+                        .background(onBackgroundColor)
+                        .padding(horizontal = 4.dp)
                 )
             }
         }
