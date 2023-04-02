@@ -36,13 +36,14 @@ fun FlipCard(
     onClick: (CardFace) -> Unit,
     modifier: Modifier = Modifier,
     axis: RotationAxis = RotationAxis.AxisY,
+    durationEffect: Int = 600,
     back: @Composable () -> Unit = {},
     front: @Composable () -> Unit = {},
 ) {
     val rotation = animateFloatAsState(
         targetValue = cardFace.angle,
         animationSpec = tween(
-            durationMillis = 400,
+            durationMillis = durationEffect,
             easing = FastOutSlowInEasing,
         )
     )
