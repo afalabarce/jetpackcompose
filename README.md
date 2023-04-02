@@ -498,6 +498,8 @@ MobileAds.initialize(this) {}
 
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
+Disponible el método de extensión a String toSvg() que convierte un texto que es un vector drawable android a su equivalente SVG estandar
+
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
 
 Espero que sea de ayuda, tanto didácticamente, como para su uso en tus apps...
@@ -615,7 +617,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.4.6'
+implementation 'io.github.afalabarce:jetpackcompose:1.5.0'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
