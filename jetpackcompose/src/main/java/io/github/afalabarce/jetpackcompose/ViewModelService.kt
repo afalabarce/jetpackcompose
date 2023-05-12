@@ -2,8 +2,6 @@ package io.github.afalabarce.jetpackcompose
 
 import androidx.lifecycle.*
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.MutableCreationExtras
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -11,11 +9,18 @@ open class ViewModelService: LifecycleService(),
     ViewModelStoreOwner,
     HasDefaultViewModelProviderFactory, CoroutineScope by CoroutineScope(Dispatchers.IO) {
     private val mViewModelStore: ViewModelStore = ViewModelStore()
-    private var mFactory: ViewModelProvider.Factory? = null
 
-    override fun getViewModelStore(): ViewModelStore {
-        return mViewModelStore
-    }
+    override val  viewModelStore: ViewModelStore
+        get() = mViewModelStore
+
+    private var mDefaultViewModelProviderFactory: ViewModelProvider.Factory? = null
+    override val defaultViewModelProviderFactory: ViewModelProvider.Factory
+        get() {
+            if (mDefaultViewModelProviderFactory == null)
+                mDefaultViewModelProviderFactory = ViewModelProvider.AndroidViewModelFactory()
+
+            return mDefaultViewModelProviderFactory!!
+        }
 
     override fun onCreate() {
         super.onCreate()
@@ -27,17 +32,5 @@ open class ViewModelService: LifecycleService(),
                 }
             }
         })
-    }
-
-    override fun getDefaultViewModelProviderFactory(): ViewModelProvider.Factory =
-        if (mFactory != null)
-            mFactory!!
-        else (ViewModelProvider.AndroidViewModelFactory().also { mFactory = it })
-
-    override fun getDefaultViewModelCreationExtras(): CreationExtras {
-        return MutableCreationExtras(super.getDefaultViewModelCreationExtras()).apply {
-            set(ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY, application)
-        }
-
     }
 }

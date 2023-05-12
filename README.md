@@ -450,6 +450,77 @@ var isExpanding by remember {
 
 ```
 
+13. **ScaffoldWizard**, este composable es un Scaffold que implementa de forma sencilla el despliegue de 
+un Wizard, indicando una serie de composables (cada apartado del Wizard), de este modo automatizamos la 
+tarea de generación del típico asistente u onBoarding. Su firma es la siguiente:
+
+```kotlin
+fun ScaffoldWizard(
+    modifier: Modifier = Modifier,
+    topBar: @Composable () -> Unit = {},
+    snackBarHost: @Composable () -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
+    previousButtonColors: ButtonColors = ButtonDefaults.buttonColors(),
+    previousButtonShape: Shape = MaterialTheme.shapes.medium,
+    previousButtonElevation: ButtonElevation? = null,
+    previousButtonBorder: BorderStroke? = null,
+    previousButtonContent: @Composable () -> Unit,
+    nextButtonColors: ButtonColors = ButtonDefaults.buttonColors(),
+    nextButtonShape: Shape = MaterialTheme.shapes.medium,
+    nextButtonElevation: ButtonElevation? = null,
+    nextButtonBorder: BorderStroke? = null,
+    nextButtonContent: @Composable () -> Unit,
+    finishButtonContent: @Composable () -> Unit,
+    pagerIndicatorActiveColor: Color = MaterialTheme.colorScheme.primary,
+    pagerIndicatorInactiveColor: Color = MaterialTheme.colorScheme.secondary,
+    floatingActionButtonPosition : FabPosition = FabPosition . End,
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = contentColorFor(containerColor),
+    contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+    vararg page: @Composable () -> Unit,
+)
+```
+Como podemos apreciar, es altamente configurable, permitiendo definir composables para cualquier estado en el que se encuentre
+nuestro asistente, así como personalizar su apariencia.
+
+14. **setConnectionAvailableContent**, este método es una extensión a ComponentActivity, el cual,
+gracias a su integración con NetworkStatusTracker, es capaz de monitorizar el estado de conexión de la app
+de forma continuada, emitiendo el estado con un Flow, durante el ciclo de vida de la app. 
+**Este método sustituiría a setContent**, el cual implementa dentro de sí mismo.
+
+```kotlin
+fun ComponentActivity.setConnectionAvailableContent(content: @Composable (NetworkStatus) -> Unit){
+    setContent {
+        val networkStatusTracker by remember { mutableStateOf(NetworkStatusTracker(this)) }
+        val connectionStatus by networkStatusTracker.networkStatus.collectAsStateWithLifecycle(NetworkStatus.Available)
+
+        content(connectionStatus)
+    }
+}
+```
+
+Siendo NetworkStatus la siguiente sealed class:
+
+```kotlin
+sealed class NetworkStatus{
+    object Available : NetworkStatus()
+    object Unavailable : NetworkStatus()
+}
+```
+
+Por tanto su uso en una activity sería: 
+
+```kotlin
+@OptIn(ExperimentalAnimationApi::class)
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setConnectionAvailableContent { networkStatus ->
+
+        }
+    }
+```
+
 13. **AdmobInterstitialAdvertView**, muestra un intersticial clásico, a pantalla completa, su firma es la siguiente:
 
 ```kotlin
@@ -615,7 +686,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.4.6'
+implementation 'io.github.afalabarce:jetpackcompose:1.5.3'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
