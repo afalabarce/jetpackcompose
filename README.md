@@ -477,11 +477,30 @@ fun ScaffoldWizard(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-    vararg page: @Composable () -> Unit,
+    pages: List<@Composable () -> Unit>,
 )
 ```
 Como podemos apreciar, es altamente configurable, permitiendo definir composables para cualquier estado en el que se encuentre
 nuestro asistente, así como personalizar su apariencia.
+
+A continuación, se muestra un ejemplo de uso con cuatro composables como páginas:
+
+```kotlin
+ScaffoldWizard(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { QualityAppTopAppBar() },
+        previousButtonContent = { Text(text = stringResource(id = R.string.previous)) },
+        nextButtonContent = { Text(text = stringResource(id = R.string.next)) },
+        finishButtonContent = { Text(text = stringResource(id = R.string.finish)) },
+        bottomBarPaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        pages = listOf<@Composable () -> Unit>(
+            { FirstOnboardingPage() },
+            { SecondOnboardingPage() },
+            { ThirdOnboardingPage() },
+            { FourthOnboardingPage() },
+        )
+    )
+```
 
 14. **setConnectionAvailableContent**, este método es una extensión a ComponentActivity, el cual,
 gracias a su integración con NetworkStatusTracker, es capaz de monitorizar el estado de conexión de la app
@@ -640,7 +659,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.5.4'
+implementation 'io.github.afalabarce:jetpackcompose:1.5.5'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
