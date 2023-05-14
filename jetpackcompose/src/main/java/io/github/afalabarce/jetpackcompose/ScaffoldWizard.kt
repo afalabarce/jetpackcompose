@@ -1,8 +1,9 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
-
 package io.github.afalabarce.jetpackcompose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,11 +28,12 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
+import androidx.compose.foundation.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
-import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.foundation.pager.rememberPagerState
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ScaffoldWizard(
     modifier: Modifier = Modifier,
@@ -56,6 +57,8 @@ fun ScaffoldWizard(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
+    bottomBarPaddingValues: PaddingValues = PaddingValues(),
+    contentPaddingValues: PaddingValues = PaddingValues(),
     vararg page: @Composable () -> Unit,
 ){
     var previousEnabled by remember { mutableStateOf(false) }
@@ -73,7 +76,7 @@ fun ScaffoldWizard(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
         bottomBar = {
-            ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(bottomBarPaddingValues)) {
                 val (previous, next) = createRefs()
                 Button(
                     modifier = Modifier.constrainAs(previous){
@@ -120,10 +123,10 @@ fun ScaffoldWizard(
                 }
             }
         }
-    ) { paddingValues ->
+    ) {
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues),
+            .padding(contentPaddingValues),
         ) {
             val (horizontalPager, pagerIndicator) = createRefs()
 
@@ -150,7 +153,7 @@ fun ScaffoldWizard(
                     height = Dimension.fillToConstraints
                 },
                 userScrollEnabled = true,
-                count = page.size,
+                pageCount = page.size,
                 state = pagerState,
             ) { pagerScope ->
                 if (pagerScope == 0)
