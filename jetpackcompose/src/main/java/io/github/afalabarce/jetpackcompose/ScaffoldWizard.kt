@@ -60,7 +60,7 @@ fun ScaffoldWizard(
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
     bottomBarPaddingValues: PaddingValues = PaddingValues(),
     contentPaddingValues: PaddingValues = PaddingValues(),
-    vararg page: @Composable () -> Unit,
+    pages: List<@Composable () -> Unit>,
 ){
     var previousEnabled by remember { mutableStateOf(false) }
     var nextEnabled by remember { mutableStateOf(true) }
@@ -68,7 +68,7 @@ fun ScaffoldWizard(
     val pagerState = rememberPagerState(0)
 
     previousEnabled = pagerState.currentPage != 0
-    nextEnabled = pagerState.currentPage != page.size - 1
+    nextEnabled = pagerState.currentPage != pages.size - 1
 
     Scaffold(
         modifier = modifier,
@@ -144,7 +144,7 @@ fun ScaffoldWizard(
                     end.linkTo(parent.end, 16.dp)
                     bottom.linkTo(parent.bottom, 4.dp)
                 },
-                pageCount = page.size,
+                pageCount = pages.size,
                 activeColor = pagerIndicatorActiveColor,
                 inactiveColor = pagerIndicatorInactiveColor,
             )
@@ -159,13 +159,13 @@ fun ScaffoldWizard(
                     height = Dimension.fillToConstraints
                 },
                 userScrollEnabled = true,
-                pageCount = page.size,
+                pageCount = pages.size,
                 state = pagerState,
             ){
                 if (!pagerState.isScrollInProgress)
                     addPage = 0
 
-                page[pagerState.currentPage]()
+                pages[pagerState.currentPage]()
             }
 
             LaunchedEffect(addPage){
