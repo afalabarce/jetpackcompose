@@ -31,6 +31,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.compose.foundation.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.LaunchedEffect
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
@@ -62,9 +63,12 @@ fun ScaffoldWizard(
     vararg page: @Composable () -> Unit,
 ){
     var previousEnabled by remember { mutableStateOf(false) }
-    var nextEnabled by remember { mutableStateOf(false) }
-    var currentPage by remember { mutableStateOf(0) }
-    val pagerState = rememberPagerState(currentPage)
+    var nextEnabled by remember { mutableStateOf(true) }
+    var addPage by remember { mutableStateOf(0) }
+    val pagerState = rememberPagerState(0)
+
+    previousEnabled = pagerState.currentPage != 0
+    nextEnabled = pagerState.currentPage != page.size - 1
 
     Scaffold(
         modifier = modifier,
@@ -76,7 +80,9 @@ fun ScaffoldWizard(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
         bottomBar = {
-            ConstraintLayout(modifier = Modifier.fillMaxWidth().padding(bottomBarPaddingValues)) {
+            ConstraintLayout(modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottomBarPaddingValues)) {
                 val (previous, next) = createRefs()
                 Button(
                     modifier = Modifier.constrainAs(previous){
@@ -92,7 +98,7 @@ fun ScaffoldWizard(
                     border = previousButtonBorder,
                     onClick = {
                         if (previousEnabled) {
-                            currentPage--
+                            addPage = -1
                         }
                     }
                 ) {
@@ -112,7 +118,7 @@ fun ScaffoldWizard(
                     border = nextButtonBorder,
                     onClick = {
                         if (nextEnabled) {
-                            currentPage++
+                            addPage = 1
                         }
                     }
                 ) {
@@ -155,16 +161,15 @@ fun ScaffoldWizard(
                 userScrollEnabled = true,
                 pageCount = page.size,
                 state = pagerState,
-            ) { _ ->
-                if (pagerState.currentPage == 0)
-                    previousEnabled = false
+            ){
+                if (!pagerState.isScrollInProgress)
+                    addPage = 0
 
-                if (pagerState.currentPage == page.size - 1)
-                    nextEnabled = false
+                page[pagerState.currentPage]()
+            }
 
-                if (pagerState.currentPage in page.indices){
-                    page[pagerState.currentPage]()
-                }
+            LaunchedEffect(addPage){
+                pagerState.animateScrollToPage(pagerState.currentPage + addPage )
             }
         }
     }
