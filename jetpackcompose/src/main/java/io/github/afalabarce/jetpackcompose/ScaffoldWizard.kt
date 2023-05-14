@@ -123,9 +123,10 @@ fun ScaffoldWizard(
                 }
             }
         }
-    ) {
+    ) { containerPaddingValues ->
         ConstraintLayout(modifier = Modifier
             .fillMaxSize()
+            .padding(containerPaddingValues)
             .padding(contentPaddingValues),
         ) {
             val (horizontalPager, pagerIndicator) = createRefs()
@@ -136,7 +137,6 @@ fun ScaffoldWizard(
                     start.linkTo(parent.start, 16.dp)
                     end.linkTo(parent.end, 16.dp)
                     bottom.linkTo(parent.bottom, 4.dp)
-                    width = Dimension.fillToConstraints
                 },
                 pageCount = page.size,
                 activeColor = pagerIndicatorActiveColor,
@@ -155,15 +155,15 @@ fun ScaffoldWizard(
                 userScrollEnabled = true,
                 pageCount = page.size,
                 state = pagerState,
-            ) { pagerScope ->
-                if (pagerScope == 0)
+            ) { _ ->
+                if (pagerState.currentPage == 0)
                     previousEnabled = false
 
-                if (pagerScope == page.size - 1)
+                if (pagerState.currentPage == page.size - 1)
                     nextEnabled = false
 
-                if (pagerScope in page.indices){
-                    page[pagerScope]()
+                if (pagerState.currentPage in page.indices){
+                    page[pagerState.currentPage]()
                 }
             }
         }
