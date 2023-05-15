@@ -540,6 +540,34 @@ Por tanto su uso en una activity sería:
     }
 ```
 
+Se agrega una nueva funcionalidad en relación a la descrita anteriormente, la cual permite que podamos obtener el 
+estado en cualquier composable, usando LocalComposition, para ello en el onCreate de nuestra activity, en lugar de 
+setContent utilizaremos **setNetworkingContent**, permitiéndonos a partir de ahí, utilizar LocalNetworkStatus.current
+para obtener el estado de conexión. Veámoslo con un ejemplo:
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setNetworkingContent { 
+            MaterialTheme {
+                // ...
+            }
+        }
+    }
+```
+
+Y en cualquier composable:
+
+```kotlin
+
+@Composable fun MyNetworkingComposable(){
+    val networkStatus = LocalNetworkStatus.current
+    // ...
+}
+
+```
+
+
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
