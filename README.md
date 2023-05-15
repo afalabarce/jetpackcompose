@@ -645,7 +645,6 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
       <xml version="1.0" encoding="UTF-8" ?>
 
       <account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
-
               android:accountType="@string/your_account_type_name_resource_id"
               android:icon="@mipmap/ic_launcher"
               android:label="@string/app_name"

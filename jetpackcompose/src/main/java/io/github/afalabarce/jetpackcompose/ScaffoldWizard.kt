@@ -52,6 +52,7 @@ fun ScaffoldWizard(
     nextButtonBorder: BorderStroke? = null,
     nextButtonContent: @Composable () -> Unit,
     finishButtonContent: @Composable () -> Unit,
+    onFinish: () -> Unit = {},
     pagerIndicatorActiveColor: Color = MaterialTheme.colorScheme.primary,
     pagerIndicatorInactiveColor: Color = MaterialTheme.colorScheme.secondary,
     floatingActionButtonPosition : FabPosition = FabPosition . End,
@@ -119,6 +120,8 @@ fun ScaffoldWizard(
                     onClick = {
                         if (nextEnabled) {
                             addPage = 1
+                        }else{
+                            onFinish()
                         }
                     }
                 ) {
@@ -162,10 +165,10 @@ fun ScaffoldWizard(
                 pageCount = pages.size,
                 state = pagerState,
             ){
-                if (!pagerState.isScrollInProgress)
+                if (!pagerState.isScrollInProgress) {
                     addPage = 0
-
-                pages[pagerState.currentPage]()
+                    pages[pagerState.currentPage]()
+                }
             }
 
             LaunchedEffect(addPage){
