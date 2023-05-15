@@ -658,7 +658,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.5.5'
+implementation 'io.github.afalabarce:jetpackcompose:1.5.8'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
