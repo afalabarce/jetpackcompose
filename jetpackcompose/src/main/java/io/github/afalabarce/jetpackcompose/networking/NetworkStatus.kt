@@ -3,8 +3,18 @@ package io.github.afalabarce.jetpackcompose.networking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+sealed class NetworkConnectionType {
+    object Unknown: NetworkConnectionType()
+    object ConnectionCellular: NetworkConnectionType()
+    object Connection3G: NetworkConnectionType()
+    object Connection4G: NetworkConnectionType()
+    object Connection5G: NetworkConnectionType()
+    object ConnectionWifi: NetworkConnectionType()
+}
 sealed class NetworkStatus{
-    object Available : NetworkStatus()
+    object Available : NetworkStatus(){
+        var connectionType: NetworkConnectionType = NetworkConnectionType.Connection3G
+    }
     object Unavailable : NetworkStatus()
 }
 

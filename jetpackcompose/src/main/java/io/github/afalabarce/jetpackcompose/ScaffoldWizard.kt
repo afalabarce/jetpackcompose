@@ -32,6 +32,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
@@ -65,8 +66,10 @@ fun ScaffoldWizard(
 ){
     var previousEnabled by remember { mutableStateOf(false) }
     var nextEnabled by remember { mutableStateOf(true) }
-    var addPage by remember { mutableStateOf(0) }
-    val pagerState = rememberPagerState(0)
+    var addPage by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(0){
+        pages.size
+    }
 
     previousEnabled = pagerState.currentPage != 0
     nextEnabled = pagerState.currentPage != pages.size - 1
@@ -162,7 +165,6 @@ fun ScaffoldWizard(
                     height = Dimension.fillToConstraints
                 },
                 userScrollEnabled = true,
-                pageCount = pages.size,
                 state = pagerState,
             ){
                 if (!pagerState.isScrollInProgress) {
