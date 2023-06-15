@@ -567,6 +567,51 @@ Y en cualquier composable:
 
 ```
 
+15. RadioGroup
+
+RadioGroup nos permite crear de forma rápida y sencilla una agrupación de radiobuttons, en base a una lista de
+elementos acotada, la principal ventaja es que la lista puede ser de cualquier tipo.
+
+La definición del composable es la siguiente:
+```kotlin
+@Composable
+inline fun <reified T>RadioButtonGroup(
+    modifier: Modifier = Modifier,
+    radioButtonLabel: @Composable (T) -> Unit = { },
+    radioButtonValues: Array<T>,
+    selectedValue: T?,
+    borderStroke: BorderStroke? = null,
+    dividerHeight: Dp = 4.dp,
+    excludedValues: Array<T> = emptyArray(),
+    radioButtonItemShape: Shape = MaterialTheme.shapes.medium,
+    crossinline onCheckedChanged: (T) -> Unit
+)
+```
+
+Como podemos ver, es altamente personalizable, pudiendo establecer diversos valores que van a facilitarnos
+el despliegue del radiogroup, además, en caso de necesitarlo, disponemos una lista de exclusión en la que 
+indicaremos elementos de la lista de valores que no deben ser generados.
+
+Un ejemplo de uso sería el siguiente:
+```kotlin
+val texts = listOf("Elemento 1", "Elemento 2", "Elemento 3")
+var selectedValue by remember { mutableStateOf("") }
+Column (
+    modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+){ 
+    RadioButtonGroup(
+        radioButtonValues = texts.toTypedArray(),
+        selectedValue = selectedValue,
+        onCheckedChanged = {selectedValue = it },
+        radioButtonItemShape = RoundedCornerShape(16.dp),
+        radioButtonLabel = {
+            Text(text = "Cosa $it")
+        }
+    )
+}
+```
 
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
@@ -686,7 +731,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.6.4'
+implementation 'io.github.afalabarce:jetpackcompose:1.6.5'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
