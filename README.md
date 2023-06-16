@@ -613,6 +613,54 @@ Column (
 }
 ```
 
+16. PermissionManager
+
+Con PermissionManager podemos, de una forma muy simple, gestionar los permisos a utilizar en un composable
+concreto, de este modo podremos (usando un BoxScope) actuar en caso de que tengamos algún permiso denegado,
+por ejemplo, mostrando un diálogo, y a su vez marcando alguna situación que se ejecuta en el bloque general.
+
+La firma de PermissionManager es la siguiente:
+
+```kotlin
+@Composable
+fun PermissionManager(
+    vararg permission: String,
+    modifier: Modifier = Modifier,
+    showDeniedIfNeeded: Boolean = true,
+    onDenied: @Composable BoxScope.(Array<String>) -> Unit,
+    onGranted: @Composable BoxScope.(Array<String>) -> Unit,
+)
+```
+
+Como podemos apreciar, disponemos una colección variable para los permisos, seguido de varios parámetros que nos van a
+permitir modificar el comportamiento de lo que se va a mostrar, así como lo que se pintará en el caso de que no tengamos aprobado
+algún permiso:
+- showDeniedIfNeeded, si está a true en el caso de que existan permisos sin aceptar, se ejecutará el bloque onDenied.
+- onDenied, es el bloque de código que se ejecutará cuando alguno de los permisos solicitados no haya sido aceptado. Como parámetro
+se devuelve la lista de permisos no aceptados.
+- onGranted, es el bloque de código que se ejecutará siempre y cuando alguno de los permisos solicitados haya sido aceptado. **Este bloque de 
+código NO se ejecutará si no hay al menos un permisos aceptado**.
+
+Ejemplo de uso:
+
+```kotlin
+PermissionManager(
+        Manifest.permission.INTERNET,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_NETWORK_STATE,
+        Manifest.permission.CALL_PHONE,
+        modifier = Modifier,
+        onDenied = { deniedPermissions ->
+            Text(text = "Denied: ${deniedPermissions.joinToString("\n")}", modifier = Modifier.align(Alignment.Center))
+        },
+    ) { grantedPermissions ->
+        Text(text = "Granted: ${grantedPermissions.joinToString("\n")}")
+    }
+```
+
+## Otras Funcionalidades
+
 Además se agrega una **extensión a Modifier** que permite poner un borde punteado a cualquier composable.
 
 Para terminar, se ha agregado un Service, que permite utilizar ViewModels, ideal para que un servicio que tengamos implementado ejecute código de forma reactiva.
@@ -731,7 +779,7 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
 Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.6.5'
+implementation 'io.github.afalabarce:jetpackcompose:1.6.6'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
