@@ -1,5 +1,15 @@
 # jetpackcompose
-Jetpack Compose Composables. 
+Este repo alberga una serie de composables que, de un modo u otro me son o han sido necesarios en el desarrollo de mis apps, otros simplemente han sido un reto autoimpuesto para probar nuevas cosillas y/o probar nuevas tecnologías.
+
+## Instalación
+
+```
+implementation 'io.github.afalabarce:jetpackcompose:1.6.6'
+```
+
+Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
+
+## Uso
 
 Contiene once composables (por ahora) útiles para el día a día:  
 
@@ -774,12 +784,5 @@ Con esta clase, puedes controlar fácilmente la creación y actualización de cu
         
 ```
  
-**¡ Y ESTO ES TODO!**
+**¡ Y ESTO ES TODO! GRACIAS por leerte todo este mamotreto :D**
 
-Como nota final, si deseas incluir este proyecto en tus apps, en tu build.gradle sólo deberás agregar lo siguiente:
-
-```
-implementation 'io.github.afalabarce:jetpackcompose:1.6.6'
-```
-
-Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
