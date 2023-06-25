@@ -7,10 +7,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.afalabarce.jetpackcompose.networking.NetworkStatus
 import io.github.afalabarce.jetpackcompose.networking.NetworkStatusTracker
 
-val LocalNetworkStatus = compositionLocalOf<NetworkStatus> {
-    NetworkStatus.Available
-}
-
 fun ComponentActivity.setNetworkingContent(content: @Composable () -> Unit){
     setContent {
         val currentNetworkStatus by NetworkStatusTracker(this@setNetworkingContent)

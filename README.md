@@ -4,7 +4,7 @@ Este repo alberga una serie de composables que, de un modo u otro me son o han s
 ## Instalación
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.6.6'
+implementation 'io.github.afalabarce:jetpackcompose:1.6.7'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
@@ -552,13 +552,13 @@ Por tanto su uso en una activity sería:
 
 Se agrega una nueva funcionalidad en relación a la descrita anteriormente, la cual permite que podamos obtener el 
 estado en cualquier composable, usando LocalComposition, para ello en el onCreate de nuestra activity, en lugar de 
-setContent utilizaremos **setNetworkingContent**, permitiéndonos a partir de ahí, utilizar LocalNetworkStatus.current
+setContent utilizaremos **setUiContent**, permitiéndonos a partir de ahí, utilizar LocalNetworkStatus.current
 para obtener el estado de conexión. Veámoslo con un ejemplo:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setNetworkingContent { 
+        setUiContent { 
             MaterialTheme {
                 // ...
             }
@@ -575,6 +575,29 @@ Y en cualquier composable:
     // ...
 }
 
+```
+
+Además se agrega una nueva funcionalidad para LocalComposition llamada LocalBiometricCapabilities, la cual permite
+determinar si tenemos capacidades de autenticación biométrica (ya sea huella, faceId o patrón, pin, etc), en cuyo caso podremos lanzar 
+dicha autenticación. Su utilización sería la siguiente:
+
+```kotlin
+setUiContent {
+  val bioCapabilities = LocalBiometricCapabilities.current
+
+  if (bioCapabilities.canBiometricAuthentication){
+    bioCapabilities.showBiometricPrompt(
+      title = "Autenticación Biométrica",
+      subTitle = if (bioCapabilities.canDevicePattern) 
+          "Introduzca patrón" 
+        else 
+          "Use el sensor biométrico para autenticarse",
+      description = "Esta aplicación se ha activado para autenticación biométrica / patrón de verificación, sólo podrá iniciar sesión utilizando uno de los métodos habilitados"
+    ){ isSuccess, errorCode, errorString ->
+      // blah blah blah
+    }
+  }
+}
 ```
 
 15. RadioGroup
