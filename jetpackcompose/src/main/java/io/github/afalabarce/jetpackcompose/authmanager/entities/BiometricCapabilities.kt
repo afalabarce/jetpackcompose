@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.core.os.CancellationSignal
+import androidx.fragment.app.FragmentActivity
 
 
 class BiometricCapabilities(
@@ -24,15 +26,17 @@ class BiometricCapabilities(
      * @param title title for biometric authentication dialog
      * @param subTitle subtitle for biometric authentication dialog
      * @param description description text for biometric authentication dialog
+     * @param negativeText negativeText for cancel biometric authentication
      * @param onBiometricAuthentication lambda function with the result of authentication
      */
     fun showBiometricPrompt(
-        title: String = "",
+        title: String,
         subTitle: String = "",
-        description: String = "",
+        description: String,
+        negativeText: String,
         onBiometricAuthentication: (isSuccess: Boolean, errorCode: Int, errorDescription: String) -> Unit = { _, _, _ ->  }
     ){
-        if (biometricManager != null && context != null && context is AppCompatActivity){
+        if (biometricManager != null && context != null){
             val promptInfo = BiometricPrompt.PromptInfo.Builder()
                 .setAllowedAuthenticators(
                     if (canBiometric)
@@ -43,11 +47,12 @@ class BiometricCapabilities(
                 .setTitle(title)
                 .setSubtitle(subTitle)
                 .setDescription(description)
+                .setNegativeButtonText(negativeText)
                 .build()
-            val biometricExecutor = ContextCompat.getMainExecutor(this.context)
-            val biometricPrompt = BiometricPrompt(
-                this.context,
-                biometricExecutor,
+            val mainExecutor = ContextCompat.getMainExecutor(this.context)
+            val biometricPrompt = BiometricPrompt (
+                this.context as FragmentActivity,
+                mainExecutor,
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                         super.onAuthenticationError(errorCode, errString)
@@ -71,6 +76,13 @@ class BiometricCapabilities(
             onBiometricAuthentication(true, -1, "")
         }
 
+    }
+
+    private fun getCancellationSignal(onCancel: () -> Unit): CancellationSignal {
+        val cancellationSignal = CancellationSignal()
+        cancellationSignal.setOnCancelListener (onCancel)
+
+        return cancellationSignal
     }
 }
 
