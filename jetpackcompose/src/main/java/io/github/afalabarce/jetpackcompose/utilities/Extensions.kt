@@ -9,7 +9,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun Date.format(strFormat: String = "dd/MM/yyyy"):String = SimpleDateFormat(strFormat).format(this)
+fun Date.format(strFormat: String = "dd/MM/yyyy"):String = SimpleDateFormat(strFormat, Locale.getDefault()).format(this)
 fun Int.format(strFormat: String = "#,##0"):String = DecimalFormat(strFormat).format(this)
 fun Long.format(strFormat: String = "#,##0"):String = DecimalFormat(strFormat).format(this)
 fun Float.format(strFormat: String = "#,##0.00"):String = DecimalFormat(strFormat).format(this)
@@ -21,7 +21,7 @@ fun Calendar.today(): Date? = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()
 }
 
 fun String.toDate(format: String = "yyyy-MM-dd"): Date? = try{
-    SimpleDateFormat(format).parse(this)
+    SimpleDateFormat(format, Locale.getDefault()).parse(this)
 }catch (ex: Exception){
     null
 }

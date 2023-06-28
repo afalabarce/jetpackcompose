@@ -91,13 +91,12 @@ class Authenticator @JvmOverloads constructor(
     val onlyOneAccount: Boolean = false
 ) : AbstractAccountAuthenticator(context) {
     companion object{
-        val ACTION_OPERATION = "ActionOperation"
-        val ACTION_LOGIN_TYPE = "ActionLoginType"
-
-        val KEY_AUTH_TOKEN_TYPE = "AuthTokenType"
-        val KEY_REQUIRED_FEATURES = "RequiredFeatures"
-        val KEY_LOGIN_OPTIONS = "LoginOptions"
-        val KEY_ACCOUNT = "Account"
+        const val ACTION_OPERATION = "ActionOperation"
+        const val ACTION_LOGIN_TYPE = "ActionLoginType"
+        const val KEY_AUTH_TOKEN_TYPE = "AuthTokenType"
+        const val KEY_REQUIRED_FEATURES = "RequiredFeatures"
+        const val KEY_LOGIN_OPTIONS = "LoginOptions"
+        const val KEY_ACCOUNT = "Account"
 
         /**
          * Get all user accounts register into the system of provided account type
