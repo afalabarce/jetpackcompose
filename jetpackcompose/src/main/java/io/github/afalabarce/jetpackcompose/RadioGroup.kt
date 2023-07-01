@@ -3,6 +3,7 @@ package io.github.afalabarce.jetpackcompose
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,14 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 
 @Composable
 inline fun <reified T>RadioButtonGroup(
     modifier: Modifier = Modifier,
-    radioButtonLabel: @Composable (T) -> Unit = { },
+    crossinline radioButtonLabel: @Composable (T) -> Unit = { },
+    crossinline radioButtonBody: @Composable (T) -> Unit = { },
     radioButtonValues: Array<T>,
     selectedValue: T?,
-    itemVerticalAlignment: Alignment.Vertical = CenterVertically,
     borderStroke: BorderStroke? = null,
     dividerHeight: Dp = 4.dp,
     excludedValues: Array<T> = emptyArray(),
@@ -42,20 +44,39 @@ inline fun <reified T>RadioButtonGroup(
             .forEachIndexed{ index,  item ->
                 if (index > 0)
                     Spacer(modifier = Modifier.size(dividerHeight))
-                Row(
+
+                ConstraintLayout(
                     modifier = Modifier
                         .clip(radioButtonItemShape)
                         .border(borderStroke ?: BorderStroke(0.dp, Color.Unspecified), radioButtonItemShape)
                         .fillMaxWidth()
                         .clickable { if (item == selectedValue) onCheckedChanged(item) },
-                    verticalAlignment = itemVerticalAlignment,
                 ) {
+                    val (radioButtonView, titleView, bodyView) = createRefs()
                     RadioButton(
+                        modifier = Modifier.constrainAs(radioButtonView){
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                        },
                         selected = item == selectedValue,
                         onClick = { if (item == selectedValue) onCheckedChanged(item) }
                     )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    radioButtonLabel(item)
+
+                    Box(modifier = Modifier.constrainAs(titleView){
+                        top.linkTo(radioButtonView.top)
+                        bottom.linkTo(radioButtonView.bottom)
+                        start.linkTo(radioButtonView.end, 2.dp)
+                    }) {
+                        radioButtonLabel(item)
+                    }
+
+                    Box(modifier = Modifier.constrainAs(bodyView){
+                        top.linkTo(titleView.bottom)
+                        start.linkTo(titleView.start)
+                        end.linkTo(parent.end, 4.dp)
+                    }) {
+                        radioButtonBody(item)
+                    }
                 }
             }
     }
