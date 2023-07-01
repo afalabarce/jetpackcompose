@@ -3,6 +3,7 @@ package io.github.afalabarce.jetpackcompose
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,21 +64,29 @@ inline fun <reified T>RadioButtonGroup(
                         onClick = { onCheckedChanged(item) }
                     )
 
-                    Column(modifier = Modifier.constrainAs(titleView){
-                        top.linkTo(radioButtonView.top)
-                        bottom.linkTo(radioButtonView.bottom)
-                        start.linkTo(radioButtonView.end, 2.dp)
-                        end.linkTo(parent.end)
-                    }) {
+                    Column(
+                        modifier = Modifier.constrainAs(titleView){
+                            top.linkTo(radioButtonView.top)
+                            bottom.linkTo(radioButtonView.bottom)
+                            start.linkTo(radioButtonView.end, 2.dp)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Center
+                    ) {
                         radioButtonLabel(item)
                     }
 
-                    Column(modifier = Modifier.constrainAs(bodyView){
-                        top.linkTo(titleView.bottom)
-                        start.linkTo(titleView.start)
-                        end.linkTo(parent.end, 4.dp)
-                        width = Dimension.fillToConstraints
-                    }) {
+                    Column(
+                        modifier = Modifier.constrainAs(bodyView){
+                            top.linkTo(titleView.bottom)
+                            start.linkTo(titleView.start)
+                            end.linkTo(parent.end, 4.dp)
+                            width = Dimension.fillToConstraints
+                        },
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.Top) {
                         radioButtonBody(item)
                     }
                 }
