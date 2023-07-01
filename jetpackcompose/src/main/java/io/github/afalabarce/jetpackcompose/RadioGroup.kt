@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,7 @@ inline fun <reified T>RadioButtonGroup(
     radioButtonLabel: @Composable (T) -> Unit = { },
     radioButtonValues: Array<T>,
     selectedValue: T?,
+    itemVerticalAlignment: Alignment.Vertical = CenterVertically,
     borderStroke: BorderStroke? = null,
     dividerHeight: Dp = 4.dp,
     excludedValues: Array<T> = emptyArray(),
@@ -46,10 +48,9 @@ inline fun <reified T>RadioButtonGroup(
                         .border(borderStroke ?: BorderStroke(0.dp, Color.Unspecified), radioButtonItemShape)
                         .fillMaxWidth()
                         .clickable { if (item == selectedValue) onCheckedChanged(item) },
-                    verticalAlignment = CenterVertically,
+                    verticalAlignment = itemVerticalAlignment,
                 ) {
                     RadioButton(
-
                         selected = item == selectedValue,
                         onClick = { if (item == selectedValue) onCheckedChanged(item) }
                     )
