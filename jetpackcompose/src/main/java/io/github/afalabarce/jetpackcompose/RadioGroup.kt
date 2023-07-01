@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 
 @Composable
 inline fun <reified T>RadioButtonGroup(
@@ -50,7 +51,7 @@ inline fun <reified T>RadioButtonGroup(
                         .clip(radioButtonItemShape)
                         .border(borderStroke ?: BorderStroke(0.dp, Color.Unspecified), radioButtonItemShape)
                         .fillMaxWidth()
-                        .clickable { if (item == selectedValue) onCheckedChanged(item) },
+                        .clickable { onCheckedChanged(item) },
                 ) {
                     val (radioButtonView, titleView, bodyView) = createRefs()
                     RadioButton(
@@ -59,21 +60,23 @@ inline fun <reified T>RadioButtonGroup(
                             start.linkTo(parent.start)
                         },
                         selected = item == selectedValue,
-                        onClick = { if (item == selectedValue) onCheckedChanged(item) }
+                        onClick = { onCheckedChanged(item) }
                     )
 
-                    Box(modifier = Modifier.constrainAs(titleView){
+                    Column(modifier = Modifier.constrainAs(titleView){
                         top.linkTo(radioButtonView.top)
                         bottom.linkTo(radioButtonView.bottom)
                         start.linkTo(radioButtonView.end, 2.dp)
+                        end.linkTo(parent.end)
                     }) {
                         radioButtonLabel(item)
                     }
 
-                    Box(modifier = Modifier.constrainAs(bodyView){
+                    Column(modifier = Modifier.constrainAs(bodyView){
                         top.linkTo(titleView.bottom)
                         start.linkTo(titleView.start)
                         end.linkTo(parent.end, 4.dp)
+                        width = Dimension.fillToConstraints
                     }) {
                         radioButtonBody(item)
                     }
