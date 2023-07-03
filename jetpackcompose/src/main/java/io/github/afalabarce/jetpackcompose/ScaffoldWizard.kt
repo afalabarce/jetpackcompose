@@ -53,6 +53,8 @@ fun ScaffoldWizard(
     nextButtonBorder: BorderStroke? = null,
     nextButtonContent: @Composable () -> Unit,
     finishButtonContent: @Composable () -> Unit,
+    onPrevious: () -> Unit = {},
+    onNext: () -> Unit = {},
     onFinish: () -> Unit = {},
     pagerIndicatorActiveColor: Color = MaterialTheme.colorScheme.primary,
     pagerIndicatorInactiveColor: Color = MaterialTheme.colorScheme.secondary,
@@ -103,7 +105,9 @@ fun ScaffoldWizard(
                     onClick = {
                         if (previousEnabled) {
                             addPage = -1
+                            onPrevious()
                         }
+
                     }
                 ) {
                     previousButtonContent()
@@ -123,6 +127,7 @@ fun ScaffoldWizard(
                     onClick = {
                         if (nextEnabled) {
                             addPage = 1
+                            onNext()
                         }else{
                             onFinish()
                         }

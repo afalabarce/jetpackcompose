@@ -4,7 +4,7 @@ Este repo alberga una serie de composables que, de un modo u otro me son o han s
 ## Instalación
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.6.9'
+implementation 'io.github.afalabarce:jetpackcompose:1.7.4'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un [PayPalMe!](https://www.paypal.com/paypalme/afalabarce)
