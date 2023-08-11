@@ -37,13 +37,13 @@ class AmountVisualTransformation(
             }
 
             val offsetMapping = if (hasMovedCursor) {
-                OKMovedCursorOffsetMapping(
+                MovedCursorOffsetMapping(
                     originalInput = input,
                     inputTransformed = numberText,
                     thousandSeparator = thousandSeparator
                 )
             } else {
-                OKFixedCursorOffsetMapping(
+                FixedCursorOffsetMapping(
                     textLength = input.length,
                     contentLength = numberText.length.safeNull()
                 )
@@ -59,7 +59,7 @@ class AmountVisualTransformation(
         }
     }
 
-    private class OKFixedCursorOffsetMapping(
+    private class FixedCursorOffsetMapping(
         private val textLength: Int,
         private val contentLength: Int
     ) : OffsetMapping {
@@ -72,7 +72,7 @@ class AmountVisualTransformation(
         }
     }
 
-    private class OKMovedCursorOffsetMapping(
+    private class MovedCursorOffsetMapping(
         private val originalInput: String,
         private val inputTransformed: String,
         private val thousandSeparator: Char
