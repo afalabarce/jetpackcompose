@@ -4,7 +4,7 @@ Este repo alberga una serie de composables que, de un modo u otro me son o han s
 ## Instalación
 
 ```
-implementation 'io.github.afalabarce:jetpackcompose:1.7.4'
+implementation 'io.github.afalabarce:jetpackcompose:1.7.5'
 ```
 
 Si crees que estoy haciendo un buen trabajo y me merezco un café, puedes invitarme haciéndome un 
@@ -716,6 +716,10 @@ class MyViewModelService: ViewModelService() {
 }
 
 ```
+
+Gracias a [@xavijimenezmulet](https://github.com/xavijimenezmulet) se agrega un AmountVisualTransformation que permite 
+establecer a un TextField un VisualTransformation que formatea el texto a un valor numérico
+con separador de miles y decimales en función del Locale de la app.
 
 ## Authenticator
 
